@@ -7,13 +7,27 @@ from torch.utils.data import DataLoader
 def save_checkpoint(state, filename="my_checkpoint.pth.tar"):
     """
         Saving checkpoints
+
+        ### Input ###
+        state ?
+        filename ?
+
+        ### Output ###
+        ??
     """
     print("=> Saving checkpoint")
     torch.save(state, filename)
 
 def load_checkpoint(checkpoint, model):
     """
-        Loading checkpoints
+        Loading checkpoints from state_dict
+
+        ### Input ###
+        checkpoint  : ?
+        model       : ?
+
+        ### Output ###
+        ??
     """
     print("=> Loading checkpoint")
     model.load_state_dict(checkpoint["state_dict"])
@@ -81,6 +95,7 @@ def check_accuracy(loader, model, device="cuda"):
     num_correct = 0
     num_pixels = 0
     mse_score = 0
+    
     # To turn off batchnorm, dropouts.
     model.eval()
 
@@ -89,16 +104,10 @@ def check_accuracy(loader, model, device="cuda"):
         for x, y in loader:
             x = x.to(device)
             y = y.to(device).unsqueeze(1)
-            preds = torch.sigmoid(model(x))
-            preds = (preds > 0.5).float()
-            num_correct += (preds == y).sum()
-            num_pixels += torch.numel(preds)
-            mse_score += np.square(np.subtract(preds,y)).mean()
+            preds = model(x)
+            mse_score += np.square(np.subtract(y,preds)).mean()
 
-
-    print(
-        f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}"
-    )
+    print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
     print(f"MSE score: {mse_score/len(loader)}")
     model.train()
 
@@ -108,8 +117,7 @@ def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda
     for idx, (x, y) in enumerate(loader):
         x = x.to(device=device)
         with torch.no_grad():
-            preds = torch.sigmoid(model(x))
-            preds = (preds > 0.5).float()
+            preds = model(x)
         torchvision.utils.save_image(preds, f"{folder}/pred_{idx}.png")
         torchvision.utils.save_image(y.unsqueeze(1), f"{folder}{idx}.png")
 
