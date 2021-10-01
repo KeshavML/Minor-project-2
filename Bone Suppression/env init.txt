@@ -1,0 +1,24 @@
+conda create -n MINOR python=3.6
+################################################
+################################################
+############ ENV SETUP ############
+y
+conda activate MINOR
+conda install --name MINOR pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch
+y
+y
+############ ENV SETUP ############
+################################################
+################################################
+############ Other libraries ############
+conda install nb_conda
+y
+############ Other libraries ############
+################################################
+################################################
+########### jupyter kernels ##########  
+conda install ipykernel
+python -m ipykernel install --user --name MINOR --display-name "MINOR"
+########### jupyter kernels ##########  
+
+

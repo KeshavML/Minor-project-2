@@ -1,0 +1,57 @@
+
+# class BoneSuppressionDataset(Dataset):
+# 	"""
+# 		JSRT and BSE_JSRT loader.
+# 	"""
+
+# 	def __init__(self, Xrays, target, transformations=transforms.ToTensor(), test=False):
+# 		"""
+# 			## inputs ##
+# 			Xrays 			: Original Xrays => dir with xrays
+# 			target 			: BSE Xrays => dir with bse xrays
+# 			transformations : image transformations => list
+# 			convert_to 		: "L" (black n white by default)
+# 			test 			:
+# 			list			: filenames for original xrays
+# 		"""
+
+# 		self.Xrays = Xrays
+# 		self.target = target
+# 		self.transformations = transformations
+# 		self.list = []
+# 		self.test = test
+
+# 		for root, dirs, files in os.walk(Xrays):
+# 			for filename in files:
+# 				self.list.append(filename)
+
+# 	def __len__(self):
+# 		"""
+# 			returns total images => integer
+# 		"""
+# 		return len(self.list)
+
+# 	def __getitem__(self, idx):
+# 		"""
+# 			## inputs ##
+# 			idx : index of image to get
+
+# 			## Outputs ##
+# 			if !(test dataset)
+# 				transformed original xray, transformed bone suppressed xray  => np array
+# 			else
+# 				transformed original xray => np array
+# 		"""
+# 		orig_img_path = os.path.join(self.Xrays, self.list[idx])
+# 		orig_img = Image.open(orig_img_path)
+# 		if not self.test:
+# 			bse_img_path = os.path.join(self.target, self.list[idx])
+# 			bse_img = Image.open(bse_img_path)
+# 			bse_img = ((np.array(bse_img)/np.array(bse_img).max())*255).astype("uint8")
+# 			orig_img = ((np.array(orig_img)/np.array(orig_img).max())*255).astype("uint8")
+# 			bse_img = Image.fromarray(bse_img).convert("L")
+# 			orig_img = Image.fromarray(orig_img).convert("L")
+# 			return self.transformations(orig_img), self.transformations(bse_img)
+# 		else:
+# 			orig_img_arr = (np.array(self.transformations(orig_img)) * 255).astype(np.uint8)
+# 			return self.transformations(orig_img_arr)
