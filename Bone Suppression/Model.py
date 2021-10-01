@@ -42,7 +42,6 @@ class BoneSuppression(nn.Module):
     def forward(self, x):
         orig = x
         x = self.encoder(x)
-        # print(x.shape)
         x = self.decoder(x)
         x = F.interpolate(x, size=orig.shape[-1])
         return x

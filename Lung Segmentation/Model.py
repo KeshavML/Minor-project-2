@@ -75,7 +75,7 @@ def test():
     print("Original Xray shape : ",x.shape)
     assert preds.shape == x.shape
     ## Save model's structure
-    torch.save(model.state_dict(), './runs/Lung Segmentation/Lung Segmentation.pth')
+    # torch.save(model.state_dict(), './runs/Lung Segmentation/Lung Segmentation.pth')
 
 if __name__ == "__main__":
     test()
