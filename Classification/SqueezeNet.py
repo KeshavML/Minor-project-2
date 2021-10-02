@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 import warnings
+from torchsummary import summary
+
 warnings.filterwarnings("ignore")
 
 class fire(nn.Module):
@@ -108,9 +110,9 @@ def fire_layer(inp, s, e):
 
 def squeezenet(pretrained=False):
     model = SqueezeNet(1, 9)
-    inp = Variable(torch.randn(3,1,512,512))
-    out = model.forward(inp)
-    print(out.size())
+    # inp = Variable(torch.randn(3,1,512,512))
+    # out = model.forward(inp)
+    # print(out.size())
     # print(model)
     
     ## Save model's structure
@@ -119,4 +121,5 @@ def squeezenet(pretrained=False):
     return model
 
 if __name__ == '__main__':
-    squeezenet()
+    model = squeezenet()
+    print(summary(model, (1, 512, 512)))

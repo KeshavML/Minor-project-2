@@ -1,6 +1,7 @@
 
 # Imports
 import torch
+from torchsummary import summary
 from torch import nn
 import warnings
 warnings.filterwarnings("ignore")
@@ -250,10 +251,11 @@ class conv_block(nn.Module):
 
 if __name__ == "__main__":
     # N = 3 (Mini batch size)
-    x = torch.randn(3, 1, 512, 512)
+    # x = torch.randn(3, 1, 512, 512)
     # output = aux1, aux2, x if aux_logits == True else x
     model = Inception(aux_logits=False, num_classes=9)
-    print(model(x).shape)
+    # print(model(x).shape)
+    print(summary(model, (1, 512, 512)))
     # print(model)
 
     # ## Save model's structure
