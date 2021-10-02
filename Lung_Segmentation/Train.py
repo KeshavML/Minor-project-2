@@ -1,10 +1,11 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from CustomTransform import ChannelDropoutCustom
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 from tqdm import tqdm
-from Model import UNET
+from Model import LungSegmentation
 from utils import (
     load_checkpoint,
     save_checkpoint,
@@ -14,19 +15,19 @@ from utils import (
 )
 
 # Hyperparameters etc.
-LEARNING_RATE = 1e-4
+LEARNING_RATE = 1e-3
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-BATCH_SIZE = 16
-NUM_EPOCHS = 3
+BATCH_SIZE = 1
+NUM_EPOCHS = 1
 NUM_WORKERS = 2
-IMAGE_HEIGHT = 1024
-IMAGE_WIDTH = 1024
-PIN_MEMORY = True
-LOAD_MODEL = True
-TRAIN_IMG_DIR = ""
-TRAIN_MASK_DIR = ""
-VAL_IMG_DIR = ""
-VAL_MASK_DIR = ""
+IMAGE_HEIGHT = 512
+IMAGE_WIDTH = 512
+PIN_MEMORY = False
+LOAD_MODEL = False
+TRAIN_IMG_DIR = "./Dataset/Training/Xrays/"
+TRAIN_MASK_DIR = "./Dataset/Training/Masks/"
+VAL_IMG_DIR = "./Dataset/Validation/Xrays/"
+VAL_MASK_DIR = "./Dataset/Validation/Masks/"
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):
     loop = tqdm(loader)
@@ -49,8 +50,6 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # update tqdm loop
         loop.set_postfix(loss=loss.item())
 
-
-
 def main():
     train_transform = A.Compose([
         A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
@@ -58,24 +57,26 @@ def main():
         A.HorizontalFlip(p=0.5),
         A.VerticalFlip(p=0.1),
         A.Normalize(
-            mean = [0.0],
-            std  = [1.0],
+            mean = [0.0,0.0,0.0],
+            std  = [1.0,1.0,1.0],
             max_pixel_value = 255.0
         ),
         ToTensorV2(),
+        ChannelDropoutCustom(p=1.0),
     ])
 
     val_transforms = A.Compose([
         A.Resize(height=IMAGE_HEIGHT, width =IMAGE_WIDTH),
         A.Normalize(
-            mean = [0.0],
-            std  = [1.0],
+            mean = [0.0,0.0,0.0],
+            std  = [1.0,1.0,1.0],
             max_pixel_value = 255.0
         ),
-        ToTensorV2()
+        ToTensorV2(),
+        ChannelDropoutCustom(p=1.0),
     ])
 
-    model = UNET(in_channels=1, out_channels=1).to(DEVICE)
+    model = LungSegmentation(in_channels=1, out_channels=1).to(DEVICE)
     loss_fn = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
@@ -94,7 +95,7 @@ def main():
     if LOAD_MODEL:
         load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)
 
-    # check_accuracy(val_loader,model,device=DEVICE)
+    check_accuracy(val_loader,model,device=DEVICE)
 
     scaler = torch.cuda.amp.GradScaler()
     for each in range(NUM_EPOCHS):

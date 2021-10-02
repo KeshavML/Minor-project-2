@@ -23,7 +23,7 @@ def get_loaders(
     pin_memory=True,
 ):
     train_ds = LungSegmentationDataset(
-        image_dir=train_dir,
+        Xray_dir=train_dir,
         mask_dir=train_maskdir,
         transform=train_transform,
     )
@@ -37,7 +37,7 @@ def get_loaders(
     )
 
     val_ds = LungSegmentationDataset(
-        image_dir=val_dir,
+        Xray_dir=val_dir,
         mask_dir=val_maskdir,
         transform=val_transform,
     )
@@ -66,9 +66,7 @@ def check_accuracy(loader, model, device="cuda"):
             preds = (preds > 0.5).float()
             num_correct += (preds == y).sum()
             num_pixels += torch.numel(preds)
-            dice_score += (2 * (preds * y).sum()) / (
-                (preds + y).sum() + 1e-8
-            )
+            dice_score += (2 * (preds * y).sum()) / ((preds + y).sum() + 1e-5)
 
     print(
         f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}"
@@ -77,7 +75,7 @@ def check_accuracy(loader, model, device="cuda"):
     model.train()
 
 def save_predictions_as_imgs(
-    loader, model, folder="saved_images/", device="cuda"
+    loader, model, folder="saved_images/", device="cpu"
 ):
     model.eval()
     for idx, (x, y) in enumerate(loader):
