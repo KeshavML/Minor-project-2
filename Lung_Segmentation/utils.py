@@ -55,7 +55,7 @@ def get_loaders(
 def check_accuracy(loader, model, device="cuda"):
     num_correct = 0
     num_pixels = 0
-    dice_score = 0
+    # dice_score = 0
     model.eval()
 
     with torch.no_grad():
@@ -72,12 +72,12 @@ def check_accuracy(loader, model, device="cuda"):
             # print(4,preds.size()) #[batch, channel, 512, 512] [2, 1, 512, 512]
             num_correct += (preds == y).sum()
             num_pixels += torch.numel(preds)
-            dice_score += (2 * (preds * y).sum()) / ((preds + y).sum() + 1e-5)
+            # dice_score += (2 * (preds * y).sum()) / ((preds + y).sum() + 1e-5)
 
     print(
         f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}"
     )
-    print(f"Dice score: {dice_score/len(loader)}")
+    # print(f"Dice score: {dice_score/len(loader)}")
     model.train()
 
 def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cpu"):
