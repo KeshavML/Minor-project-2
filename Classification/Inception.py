@@ -5,7 +5,7 @@ from torch import nn
 import warnings
 warnings.filterwarnings("ignore")
 
-class GoogLeNet(nn.Module):
+class Inception(nn.Module):
     """
         Inception V1/GoogleNet based model (because fewer inception layers)
 
@@ -24,7 +24,7 @@ class GoogLeNet(nn.Module):
     """
 
     def __init__(self, aux_logits=True, num_classes=9):
-        super(GoogLeNet, self).__init__()
+        super(Inception, self).__init__()
         assert aux_logits == True or aux_logits == False
         self.aux_logits = aux_logits
 
@@ -252,7 +252,7 @@ if __name__ == "__main__":
     # N = 3 (Mini batch size)
     x = torch.randn(3, 1, 512, 512)
     # output = aux1, aux2, x if aux_logits == True else x
-    model = GoogLeNet(aux_logits=False, num_classes=9)
+    model = Inception(aux_logits=False, num_classes=9)
     print(model(x).shape)
     # print(model)
 

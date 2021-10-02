@@ -135,11 +135,11 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
 
-def ResNet50(img_channel=1, num_classes=9):
+def ResNet34(img_channel=1, num_classes=9):
     return ResNet(block, [2, 3, 4, 2], img_channel, num_classes) 
 
 def test():
-    model = ResNet50(img_channel=1, num_classes=9)
+    model = ResNet34(img_channel=1, num_classes=9)
     y = model(torch.randn(3, 1, 512, 512))#.to("cuda")
     print(y.size())
     # print(model)
