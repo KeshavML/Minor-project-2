@@ -18,12 +18,12 @@ from utils import (
 LEARNING_RATE = 1e-3
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 1
-NUM_EPOCHS = 1
-NUM_WORKERS = 2
-IMAGE_HEIGHT = 512
-IMAGE_WIDTH = 512
+NUM_EPOCHS = 15
+NUM_WORKERS = 4
+# IMAGE_HEIGHT = 512
+# IMAGE_WIDTH = 512
 PIN_MEMORY = False
-LOAD_MODEL = False
+LOAD_MODEL = True
 TRAIN_IMG_DIR = "./Dataset/Training/Xrays/"
 TRAIN_MASK_DIR = "./Dataset/Training/Masks/"
 VAL_IMG_DIR = "./Dataset/Validation/Xrays/"
@@ -39,6 +39,10 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # forward
         with torch.cuda.amp.autocast():
             predictions = model(data)
+            # print(1,predictions.size()) #[batch, channels,512,512] [2,1,512,512]
+            # print(2,targets.size()) #[batch, channels,512,512, channels_orig] [2,1,512,512,3]
+            targets = targets[:,:,:,:,0]
+            # print(3,targets.size()) #[batch, channels,512,512] [2,1,512,512]
             loss = loss_fn(predictions, targets)
 
         # backward
@@ -52,7 +56,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
 
 def main():
     train_transform = A.Compose([
-        A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
+        # A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
         A.Rotate(limit=35, p=1.0),
         A.HorizontalFlip(p=0.5),
         A.VerticalFlip(p=0.1),
@@ -66,7 +70,7 @@ def main():
     ])
 
     val_transforms = A.Compose([
-        A.Resize(height=IMAGE_HEIGHT, width =IMAGE_WIDTH),
+        # A.Resize(height=IMAGE_HEIGHT, width =IMAGE_WIDTH),
         A.Normalize(
             mean = [0.0,0.0,0.0],
             std  = [1.0,1.0,1.0],
@@ -106,13 +110,14 @@ def main():
             "state_dict" : model.state_dict(),
             "optimizer" : optimizer.state_dict()
         }
-        save_checkpoint(checkpoint)
-        # check accuracy
-        check_accuracy(val_loader, model, device=DEVICE)
-        # print some examples to a folder
-        save_predictions_as_imgs(val_loader, 
-            model, folder="saved_images/",
-            device=DEVICE)
+        if each % 5 == 0:
+            save_checkpoint(checkpoint)
+            # check accuracy
+            check_accuracy(val_loader, model, device=DEVICE)
+            # print some examples to a folder
+            save_predictions_as_imgs(val_loader, 
+                model, folder="saved_images/",
+                device=DEVICE)
 
 if __name__ == "__main__":
     main()
