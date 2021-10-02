@@ -1,6 +1,7 @@
 import torch
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
+from CustomTransform import ChannelDropoutCustom
 from tqdm import tqdm
 import torch.nn as nn
 import torch.optim as optim
@@ -38,6 +39,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # forward
         with torch.cuda.amp.autocast():
             predictions = model(data)
+            targets = targets[:,:,:,:,0]
             loss = loss_fn(predictions, targets)
 
         # backward
@@ -51,31 +53,29 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
 
 
 def main():
-    train_transform = A.Compose(
-        [
-            A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
-            A.Rotate(limit=10, p=0.4),
-            A.HorizontalFlip(p=0.5),
-            A.Normalize(
-                mean=[0.0],
-                std=[1.0],
-                max_pixel_value=255.0,
-            ),
-            ToTensorV2(),
-        ],
-    )
+    train_transform = A.Compose([
+        A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
+        A.Rotate(limit=10, p=0.4),
+        A.HorizontalFlip(p=0.5),
+        A.Normalize(
+            mean = [0.0,0.0,0.0],
+            std  = [1.0,1.0,1.0],
+            max_pixel_value = 255.0
+        ),
+        ToTensorV2(),
+        ChannelDropoutCustom(p=1.0),
+    ])
 
-    val_transforms = A.Compose(
-        [
-            A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
-            A.Normalize(
-                mean=0.0,
-                std=1.0,
-                max_pixel_value=255.0,
-            ),
-            ToTensorV2(),
-        ],
-    )
+    val_transforms = A.Compose([
+        A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
+        A.Normalize(
+            mean = [0.0,0.0,0.0],
+            std  = [1.0,1.0,1.0],
+            max_pixel_value = 255.0
+        ),
+        ToTensorV2(),
+        ChannelDropoutCustom(p=1.0),
+    ])
 
     model = BoneSuppression(in_channels=1, out_channels=1).to(DEVICE)
     # Change the loss function
@@ -117,7 +117,8 @@ def main():
         check_accuracy(val_loader, model, device=DEVICE)
 
         # print some examples to a folder
-        save_predictions_as_imgs(val_loader, model, folder="saved_images/", device=DEVICE)
+        save_predictions_as_imgs(val_loader, model, 
+            folder="saved_images/", device=DEVICE)
 
 if __name__ == "__main__":
     main()

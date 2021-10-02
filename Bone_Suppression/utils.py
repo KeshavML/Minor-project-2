@@ -103,6 +103,7 @@ def check_accuracy(loader, model, device="cuda"):
     with torch.no_grad():
         for x, y in loader:
             x = x.to(device)
+            y = y[:,:,:,0]
             y = y.to(device).unsqueeze(1)
             preds = model(x)
             mse_score += np.square(np.subtract(y,preds)).mean()
@@ -115,6 +116,7 @@ def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda
 
     model.eval()
     for idx, (x, y) in enumerate(loader):
+        y = y[:,:,:,0]
         x = x.to(device=device)
         with torch.no_grad():
             preds = model(x)

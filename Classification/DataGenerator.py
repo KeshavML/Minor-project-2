@@ -40,7 +40,7 @@ class CovidDataset(Dataset):
         """
 
         img_path = os.path.join(self.root_dir, self.dataframe.iloc[index].file_name) # column 1 : file_name
-        image = Image.open(img_path)
+        image = Image.open(img_path).convert("RGB")
         y_label = torch.tensor(int(self.dataframe.iloc[index].labels)) # column 2 : labels
 
         if self.transform:
@@ -82,7 +82,7 @@ class MultiClassPathologyDataset(Dataset):
             ### Returns ###
             image, label array : (512x512, [1x1]) at that index.
         """
-        image = Image.open(os.path.join(self.folder_dir, self.file_names[index]))
+        image = Image.open(os.path.join(self.folder_dir, self.file_names[index])).convert("RGB")
         label = self.labels[index]
         label = torch.tensor(np.array(label, dtype=float))
         if self.transform:

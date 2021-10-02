@@ -15,7 +15,7 @@ from utils import (
 )
 
 # Hyperparameters etc.
-LEARNING_RATE = 1e-3
+LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 1
 NUM_EPOCHS = 15
