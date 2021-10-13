@@ -1,0 +1,75 @@
+Bone suppression: 
+  Completed:
+    dataset structure
+    custom transformer
+    data generator
+    model
+    utils
+    train
+    comments
+    
+  Left:
+    Testing and documentation
+    make this thing a module
+    use test1
+    saved images folder
+
+Classification:  
+  Completed:
+    Dataset: 
+      Covid:
+        structure
+      Lung Pathology:
+        structure
+    Data generator:
+      COVID and multiclass pathology
+    Models:
+      Inception model
+      ResNet34 model
+      SqueezeNet model
+    utils
+  
+  Left:
+    Training loop for all the models
+    EfficientNet script
+    FCC covid script (with transfer learning)
+    Testing and visualization script
+
+HE:
+  Completed:
+    Don't know
+  
+  Left:
+    Don't know
+
+Lung Segmentation:
+  Completed:
+    Custom transformer
+    Data generator
+    model
+    training loop
+    utils
+  
+  Left:
+    test
+    visualization
+    documentation
+
+Model viz:
+  Completed:
+    Folder structure
+  
+  Left:
+    Models' structures' visual representation
+
+Models arch:
+  completed:
+    all the architectures
+
+  left:
+    trained models
+
+Left:
+  Model visualization,
+  Training visualization
+  
