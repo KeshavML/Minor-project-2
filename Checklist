@@ -72,4 +72,6 @@ Models arch:
 Left:
   Model visualization,
   Training visualization
-  
+  grad CAM
+  Documentation
+  get the configurations for each module in a seperate a seperate file 

@@ -4,7 +4,7 @@ import numpy as np
 from DataGenerator import BoneSuppressionDataset
 from torch.utils.data import DataLoader
 
-def save_checkpoint(state, filename="my_checkpoint.pth.tar"):
+def save_checkpoint(state, filename="./runs/my_checkpoint.pth.tar"):
     """
         Saving checkpoints
 
@@ -51,7 +51,7 @@ def get_loaders( train_dir, train_maskdir, val_dir, val_maskdir, batch_size,
         val_loader      : Validation dataloader
     """
     train_ds = BoneSuppressionDataset(
-        image_dir=train_dir,
+        Xray_dir=train_dir,
         mask_dir=train_maskdir,
         transform=train_transform,
     )
@@ -65,7 +65,7 @@ def get_loaders( train_dir, train_maskdir, val_dir, val_maskdir, batch_size,
     )
 
     val_ds = BoneSuppressionDataset(
-        image_dir=val_dir,
+        Xray_dir=val_dir,
         mask_dir=val_maskdir,
         transform=val_transform,
     )
@@ -108,7 +108,7 @@ def check_accuracy(loader, model, device="cuda"):
             preds = model(x)
             mse_score += np.square(np.subtract(y,preds)).mean()
 
-    print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
+    # print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
     print(f"MSE score: {mse_score/len(loader)}")
     model.train()
 
