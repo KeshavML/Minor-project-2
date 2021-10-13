@@ -22,8 +22,8 @@ NUM_EPOCHS = 15
 NUM_WORKERS = 4
 IMAGE_HEIGHT = 512
 IMAGE_WIDTH = 512
-PIN_MEMORY = False
-LOAD_MODEL = True
+PIN_MEMORY = True
+LOAD_MODEL = False
 TRAIN_IMG_DIR = "./Dataset/Training/Xrays/"
 TRAIN_MASK_DIR = "./Dataset/Training/Masks/"
 VAL_IMG_DIR = "./Dataset/Validation/Xrays/"
@@ -97,7 +97,13 @@ def main():
     )
 
     if LOAD_MODEL:
-        load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)
+        try:
+            load_checkpoint(torch.load("/runs/my_checkpoint.pth.tar"), model)
+        except FileNotFoundError:
+            print("Error: Model not found")
+        except Exception as e:
+            print(e)
+            pass
 
     check_accuracy(val_loader,model,device=DEVICE)
 
@@ -121,9 +127,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
 

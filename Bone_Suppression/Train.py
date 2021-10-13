@@ -15,15 +15,15 @@ from utils import (
 )
 
 # Hyperparameters etc.
-LEARNING_RATE = 1e-3
+LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 4
-NUM_EPOCHS = 10
+NUM_EPOCHS = 50
 NUM_WORKERS = 2
 IMAGE_HEIGHT = 512  # 1280 originally
 IMAGE_WIDTH = 512  # 1918 originally
 PIN_MEMORY = True if torch.cuda.is_available() else False
-LOAD_MODEL = False
+LOAD_MODEL = True
 TRAIN_IMG_DIR = "Dataset/BSE_Xrays/"
 TRAIN_MASK_DIR = "Dataset/Xrays/"
 VAL_IMG_DIR = "Dataset/BSE_Xrays/"
