@@ -61,9 +61,15 @@ def check_accuracy(loader, model, device="cuda"):
     with torch.no_grad():
         for x, y in loader:
             x = x.to(device)
+            # print(1,y.size()) #[batch,512,512,channels] [2,512,512,3]
+            y = y[:,:,:,0]
+            # print(1,y.size()) #[batch,512,512] [2,512,512]
             y = y.to(device).unsqueeze(1)
             preds = torch.sigmoid(model(x))
             preds = (preds > 0.5).float()
+            # print(2,x.size()) #[batch, channel, 512, 512] [2, 1, 512, 512]
+            # print(3,y.size()) #[batch, channel, 512, 512] [2, 1, 512, 512]
+            # print(4,preds.size()) #[batch, channel, 512, 512] [2, 1, 512, 512]
             num_correct += (preds == y).sum()
             num_pixels += torch.numel(preds)
             dice_score += (2 * (preds * y).sum()) / ((preds + y).sum() + 1e-5)
@@ -74,11 +80,10 @@ def check_accuracy(loader, model, device="cuda"):
     print(f"Dice score: {dice_score/len(loader)}")
     model.train()
 
-def save_predictions_as_imgs(
-    loader, model, folder="saved_images/", device="cpu"
-):
+def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cpu"):
     model.eval()
     for idx, (x, y) in enumerate(loader):
+        y = y[:,:,:,0]
         x = x.to(device=device)
         with torch.no_grad():
             preds = torch.sigmoid(model(x))
