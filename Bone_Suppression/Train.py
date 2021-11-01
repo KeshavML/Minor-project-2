@@ -1,6 +1,7 @@
 import torch
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
+from CustomTransform import ChannelDropoutCustom
 from tqdm import tqdm
 import torch.nn as nn
 import torch.optim as optim
@@ -13,16 +14,16 @@ from utils import (load_checkpoint, save_checkpoint, get_loaders, check_accuracy
 LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 4
-NUM_EPOCHS = 3
+NUM_EPOCHS = 50
 NUM_WORKERS = 2
 IMAGE_HEIGHT = 512  # 1280 originally
 IMAGE_WIDTH = 512  # 1918 originally
 PIN_MEMORY = True if torch.cuda.is_available() else False
-LOAD_MODEL = False
-TRAIN_IMG_DIR = "data/train_images/"
-TRAIN_MASK_DIR = "data/train_masks/"
-VAL_IMG_DIR = "data/val_images/"
-VAL_MASK_DIR = "data/val_masks/"
+LOAD_MODEL = True
+TRAIN_IMG_DIR = "Dataset/BSE_Xrays/"
+TRAIN_MASK_DIR = "Dataset/Xrays/"
+VAL_IMG_DIR = "Dataset/BSE_Xrays/"
+VAL_MASK_DIR = "Dataset/Xrays/"
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):
     """
@@ -37,6 +38,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # forward
         with torch.cuda.amp.autocast():
             predictions = model(data)
+            targets = targets[:,:,:,:,0]
             loss = loss_fn(predictions, targets)
 
         # backward
@@ -85,7 +87,7 @@ def main():
     # Load if model exists
     if LOAD_MODEL:
         try:
-            load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)
+            load_checkpoint(torch.load("./runs/my_checkpoint.pth.tar"), model)
         except Exception as e:
             print(f"Error {e}: Model not found!")
 

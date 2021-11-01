@@ -1,8 +1,7 @@
-import torch
+# import torch
 import torch.nn as nn
-# from torch.optim import Adam
+from torchsummary import summary
 # from torch.utils.tensorboard import SummaryWriter
-# from torchvision.utils import save_image
 import warnings
 warnings.filterwarnings("ignore")
 # writer = SummaryWriter("runs/AE")
@@ -51,12 +50,17 @@ def test():
     model = BoneSuppression(in_channels=1, out_channels=1)
     preds = model(x)
 
+    # x = torch.randn((3,1,512,512))
+    model = BoneSuppression(in_channels=1,out_channels=1)
+    # preds = model(x)
+    
+    print(summary(model, (1, 512, 512)))
     ## Save model's structure
     # torch.save(model.state_dict(), './runs/Bone Suppression/Bone Suppression.pth')
 
-    print(preds.shape)
-    print(x.shape)
-    assert preds.shape == x.shape, "input-output shapes do not match."
+    # print(preds.shape)
+    # print(x.shape)
+    # assert preds.shape == x.shape, "input-output shapes do not match."
 
 if __name__ == "__main__":
     test()

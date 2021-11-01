@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torchvision.transforms.functional as TF
 import warnings
+from torchsummary import summary
+
 warnings.filterwarnings("ignore")
 
 class DoubleConv(nn.Module):
@@ -20,7 +22,7 @@ class DoubleConv(nn.Module):
         return self.conv(x)
 
 class LungSegmentation(nn.Module):
-    def __init__(self, in_channels=1, out_channels=1, features=[64, 128, 256, 512]):
+    def __init__(self, in_channels=1, out_channels=1, features=[16, 32, 64, 128]):
         super(LungSegmentation, self).__init__()
         self.ups = nn.ModuleList()
         self.downs = nn.ModuleList()
@@ -68,12 +70,13 @@ class LungSegmentation(nn.Module):
 
 def test():
     # batch, channel, w,l
-    x = torch.randn((3, 1, 512, 512))
+    # x = torch.randn((3, 1, 512, 512))
     model = LungSegmentation(in_channels=1, out_channels=1)
-    preds = model(x)
-    print("Mask Prediction shape : ",preds.shape)
-    print("Original Xray shape : ",x.shape)
-    assert preds.shape == x.shape
+    summary(model, (1, 512, 512))
+    # preds = model(x)
+    # print("Mask Prediction shape : ",preds.shape)
+    # print("Original Xray shape : ",x.shape)
+    # assert preds.shape == x.shape
     ## Save model's structure
     # torch.save(model.state_dict(), './runs/Lung Segmentation/Lung Segmentation.pth')
 

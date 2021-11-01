@@ -1,6 +1,7 @@
 
 # Imports
 import torch
+from torchsummary import summary
 from torch import nn
 import warnings
 warnings.filterwarnings("ignore")
@@ -55,13 +56,16 @@ class Inception(nn.Module):
         self.maxpool4 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         self.inception5a = Inception_block(370, 256, 160, 320, 32, 128, 128)
-        # self.inception5b = Inception_block(832, 384, 192, 384, 48, 128, 128)
-
-        self.avgpool = nn.AvgPool2d(kernel_size=7, stride=1)
+        self.inception5b = Inception_block(832, 250, 190, 100, 48, 20, 64)
+        self.maxpool5 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        
+        self.inception6a = Inception_block(434, 160, 120, 64, 32, 16, 32)
+        
+        self.avgpool = nn.AvgPool2d(kernel_size=7,padding=1, stride=1)
         self.dropout1 = nn.Dropout(p=0.3)
-        self.fc1 = nn.Linear(83200, 384)
+        self.fc1 = nn.Linear(4352, 512)
         self.dropout2 = nn.Dropout(p=0.3)
-        self.fc2 = nn.Linear(384,128)
+        self.fc2 = nn.Linear(512,128)
         self.dropout3 = nn.Dropout(p=0.3)
         self.fc3 = nn.Linear(128,num_classes)
 
@@ -111,11 +115,16 @@ class Inception(nn.Module):
         # print(10,x.shape)
         x = self.inception5a(x)
         # print(11,x.shape)
-        # x = self.inception5b(x)
+        x = self.inception5b(x)
+        # print(12, x.shape)
+        x = self.maxpool5(x)
+        # print(13, x.shape)
+        x = self.inception6a(x)
+        # print(14, x.shape)
         x = self.avgpool(x)
-        # print(12,x.shape)
+        # print(15,x.shape)
         x = x.reshape(x.shape[0], -1)
-        # print(13,x.shape)
+        # print(16,x.shape)
         x = self.dropout1(x)
         x = self.fc1(x)
         x = self.dropout2(x)
@@ -253,7 +262,8 @@ if __name__ == "__main__":
     x = torch.randn(3, 1, 512, 512)
     # output = aux1, aux2, x if aux_logits == True else x
     model = Inception(aux_logits=False, num_classes=9)
-    print(model(x).shape)
+    # print(model(x).shape)
+    print(summary(model, (1, 512, 512)))
     # print(model)
 
     # ## Save model's structure

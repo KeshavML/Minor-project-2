@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 import warnings
+from torchsummary import summary
+
 warnings.filterwarnings("ignore")
 
 class block(nn.Module):
@@ -140,9 +142,10 @@ def ResNet34(img_channel=1, num_classes=9):
 
 def test():
     model = ResNet34(img_channel=1, num_classes=9)
-    y = model(torch.randn(3, 1, 512, 512))#.to("cuda")
-    print(y.size())
+    # y = model(torch.randn(3, 1, 512, 512))#.to("cuda")
+    # print(y.size())
     # print(model)
+    print(summary(model, (1, 512, 512)))
 
     ## Save model's structure
     # torch.save(model.state_dict(), './runs/Classification/ResNet/ResNet.pth')

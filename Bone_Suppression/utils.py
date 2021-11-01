@@ -4,7 +4,7 @@ import numpy as np
 from DataGenerator import BoneSuppressionDataset
 from torch.utils.data import DataLoader
 
-def save_checkpoint(state, filename="my_checkpoint.pth.tar"):
+def save_checkpoint(state, filename="./runs/my_checkpoint.pth.tar"):
     """
         Saves current model state to file -> filename
     """
@@ -76,11 +76,12 @@ def check_accuracy(loader, model, device="cuda"):
     with torch.no_grad():
         for x, y in loader:
             x = x.to(device)
+            y = y[:,:,:,0]
             y = y.to(device).unsqueeze(1)
             preds = model(x)
             mse_score += np.square(np.subtract(y,preds)).mean()
 
-    print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
+    # print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
     print(f"MSE score: {mse_score/len(loader)}")
     model.train()
 
@@ -90,6 +91,7 @@ def save_predictions_as_imgs(epoch, loader, model, folder="saved_images/", devic
     """
     model.eval()
     for idx, (x, y) in enumerate(loader):
+        y = y[:,:,:,0]
         x = x.to(device=device)
         with torch.no_grad():
             preds = model(x)
