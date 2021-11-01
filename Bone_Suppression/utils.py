@@ -6,31 +6,20 @@ from torch.utils.data import DataLoader
 
 def save_checkpoint(state, filename="my_checkpoint.pth.tar"):
     """
-        Saving checkpoints
-
-        ### Input ###
-        state ?
-        filename ?
-
-        ### Output ###
-        ??
+        Saves current model state to file -> filename
     """
     print("=> Saving checkpoint")
     torch.save(state, filename)
 
 def load_checkpoint(checkpoint, model):
     """
-        Loading checkpoints from state_dict
-
-        ### Input ###
-        checkpoint  : ?
-        model       : ?
-
-        ### Output ###
-        ??
+        Loads existing model
     """
-    print("=> Loading checkpoint")
-    model.load_state_dict(checkpoint["state_dict"])
+    try:
+        model.load_state_dict(checkpoint["state_dict"])
+        print("=> Loading checkpoint")
+    except FileNotFoundError as e:
+        print(f"{e}: Model not found.")
 
 def get_loaders( train_dir, train_maskdir, val_dir, val_maskdir, batch_size, 
             train_transform, val_transform, num_workers=4, pin_memory=True):
@@ -50,33 +39,17 @@ def get_loaders( train_dir, train_maskdir, val_dir, val_maskdir, batch_size,
         train_loader    : Training dataloader
         val_loader      : Validation dataloader
     """
-    train_ds = BoneSuppressionDataset(
-        image_dir=train_dir,
-        mask_dir=train_maskdir,
-        transform=train_transform,
-    )
+    train_ds = BoneSuppressionDataset(image_dir=train_dir, mask_dir=train_maskdir,
+                transform=train_transform)
 
-    train_loader = DataLoader(
-        train_ds,
-        batch_size=batch_size,
-        num_workers=num_workers,
-        pin_memory=pin_memory,
-        shuffle=True,
-    )
+    train_loader = DataLoader(train_ds, batch_size=batch_size, num_workers=num_workers,
+                pin_memory=pin_memory,shuffle=True)
 
-    val_ds = BoneSuppressionDataset(
-        image_dir=val_dir,
-        mask_dir=val_maskdir,
-        transform=val_transform,
-    )
+    val_ds = BoneSuppressionDataset(image_dir=val_dir, mask_dir=val_maskdir,
+                transform=val_transform)
 
-    val_loader = DataLoader(
-        val_ds,
-        batch_size=batch_size,
-        num_workers=num_workers,
-        pin_memory=pin_memory,
-        shuffle=False,
-    )
+    val_loader = DataLoader(val_ds, batch_size=batch_size, num_workers=num_workers,
+                pin_memory=pin_memory,shuffle=False)
 
     return train_loader, val_loader
 
@@ -111,14 +84,18 @@ def check_accuracy(loader, model, device="cuda"):
     print(f"MSE score: {mse_score/len(loader)}")
     model.train()
 
-def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda"):
-
+def save_predictions_as_imgs(epoch, loader, model, folder="saved_images/", device="cuda"):
+    """
+        This function terrifies me.
+    """
     model.eval()
     for idx, (x, y) in enumerate(loader):
         x = x.to(device=device)
         with torch.no_grad():
             preds = model(x)
-        torchvision.utils.save_image(preds, f"{folder}/pred_{idx}.png")
-        torchvision.utils.save_image(y.unsqueeze(1), f"{folder}{idx}.png")
+        # what image is this? Predicted?
+        torchvision.utils.save_image(preds, f"{folder}/{epoch}_pred_{idx}.png")
+        # and what image is this mate? GT?
+        torchvision.utils.save_image(y.unsqueeze(1), f"{folder}/{epoch}_{idx}.png")
 
     model.train()

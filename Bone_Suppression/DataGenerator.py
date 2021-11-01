@@ -7,7 +7,6 @@ import numpy as np
 class BoneSuppressionDataset(Dataset):
 	"""
 		Xrays and Masks loader.
-
 		Masks : BSE_Xrays
 	"""
 

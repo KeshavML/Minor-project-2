@@ -29,7 +29,6 @@ class CovidDataset(Dataset):
         """
         return len(self.dataframe)
     
-    
     def __getitem__(self, index):
         """
             ### Parameters ###
@@ -38,7 +37,7 @@ class CovidDataset(Dataset):
             ### Returns ###
             image, label array : (512x512, [1x1]) at that index.
         """
-
+        
         img_path = os.path.join(self.root_dir, self.dataframe.iloc[index].file_name) # column 1 : file_name
         image = Image.open(img_path)
         y_label = torch.tensor(int(self.dataframe.iloc[index].labels)) # column 2 : labels

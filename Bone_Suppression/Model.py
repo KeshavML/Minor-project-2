@@ -15,7 +15,7 @@ class BoneSuppression(nn.Module):
             Model for bone suppression.
         """
         self.encoder = nn.Sequential(
-            nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1, bias=False),  # b, 16, 1024, 1024
+            nn.Conv2d(in_channels, 16, kernel_size=3, stride=1, padding=1, bias=False),  # b, 16, 1024, 1024
             nn.LeakyReLU(True),
             nn.MaxPool2d(2,stride=2),  # b, 16, 512, 512
 
@@ -34,7 +34,7 @@ class BoneSuppression(nn.Module):
             nn.LeakyReLU(True),
             nn.ConvTranspose2d(32, 16, 3, stride=2, padding=1),  # b, 16, 512, 512
             nn.LeakyReLU(True),
-            nn.ConvTranspose2d(16, 1, 3, stride=2, padding=1),  # b, 1, 1024, 1024
+            nn.ConvTranspose2d(16, out_channels, 3, stride=2, padding=1),  # b, 1, 1024, 1024
             # output activation function
             nn.Tanh()
         )    
@@ -48,7 +48,7 @@ class BoneSuppression(nn.Module):
 
 def test():
     x = torch.randn((3,1,512,512))
-    model = BoneSuppression(in_channels=1,out_channels=1)
+    model = BoneSuppression(in_channels=1, out_channels=1)
     preds = model(x)
 
     ## Save model's structure
