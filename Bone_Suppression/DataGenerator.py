@@ -9,7 +9,6 @@ class BoneSuppressionDataset(Dataset):
 		Xrays and Masks loader.
 		Masks : BSE_Xrays
 	"""
-
 	def __init__(self, Xray_dir, mask_dir, transform=None, test=False):
 		"""
 			### Inputs ###

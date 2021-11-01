@@ -60,13 +60,11 @@ def get_transforms():
     train_transform = A.Compose([
             A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
             A.Rotate(limit=10, p=0.4), A.HorizontalFlip(p=0.5),
-            A.Normalize(mean=[0.0], std=[1.0], max_pixel_value=255.0,),
-            ToTensorV2(),])
+            A.Normalize(mean=[0.0], std=[1.0], max_pixel_value=255.0,), ToTensorV2()])
     
     val_transform = A.Compose([
             A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
-            A.Normalize(mean=0.0, std=1.0, max_pixel_value=255.0,),
-            ToTensorV2(),])
+            A.Normalize(mean=0.0, std=1.0, max_pixel_value=255.0,), ToTensorV2()])
     
     return train_transform, val_transform
 
@@ -80,9 +78,9 @@ def main():
 
     # Training and validation data loaders
     train_loader, val_loader = get_loaders(
-        TRAIN_IMG_DIR, TRAIN_MASK_DIR,
-        VAL_IMG_DIR, VAL_MASK_DIR, BATCH_SIZE,
-        train_transform, val_transform, NUM_WORKERS,PIN_MEMORY)
+            TRAIN_IMG_DIR, TRAIN_MASK_DIR,
+            VAL_IMG_DIR, VAL_MASK_DIR, BATCH_SIZE,
+            train_transform, val_transform, NUM_WORKERS,PIN_MEMORY)
 
     # Load if model exists
     if LOAD_MODEL:

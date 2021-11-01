@@ -61,7 +61,7 @@ def check_accuracy(loader, model, device="cuda"):
             # dice_score += (2 * (preds * y).sum()) / ((preds + y).sum() + 1e-5)
 
     print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
-    print(f"Dice score: {dice_score/len(loader)}")
+    # print(f"Dice score: {dice_score/len(loader)}")
     model.train()
 
 def save_predictions_as_imgs(epoch, loader, model, folder="saved_images/", device="cpu"):
