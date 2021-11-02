@@ -10,15 +10,15 @@ class CovidDataset(Dataset):
     """
         ### Parameters ###
         csv_file  : file_name = xray images' names, labels = [1x1] int list
-        root_dir  : with all the xrays
+        img_dir  : with all the xrays
         transform : transforms for augmentation
 
         ### Returns ###
         image, label array : (512x512, [1x1])
     """
-    def __init__(self, csv_file, root_dir, transform = None):
+    def __init__(self, csv_file, img_dir, transform = None):
         self.dataframe = pd.read_csv(csv_file)
-        self.root_dir = root_dir
+        self.img_dir = img_dir
         self.transform = transform
         self.file_names = self.dataframe.file_name.values.tolist()
         self.labels = self.dataframe.labels.values.tolist()
@@ -38,7 +38,7 @@ class CovidDataset(Dataset):
             image, label array : (512x512, [1x1]) at that index.
         """
         
-        img_path = os.path.join(self.root_dir, self.dataframe.iloc[index].file_name) # column 1 : file_name
+        img_path = os.path.join(self.img_dir, self.dataframe.iloc[index].file_name) # column 1 : file_name
         image = Image.open(img_path).convert("RGB")
         y_label = torch.tensor(int(self.dataframe.iloc[index].labels)) # column 2 : labels
 
@@ -51,13 +51,13 @@ class MultiClassPathologyDataset(Dataset):
     """
         ### Parameters ###
         csv_file  : file_name = xray images' names, labels = [1x9] int list
-        folder_dir : directory with all the xrays
+        img_dir : directory with all the xrays
         transform  : transforms for augmentation
 
     """
-    def __init__(self, csv_file, folder_dir, transform = None):
+    def __init__(self, csv_file, img_dir, transform = None):
         self.dataframe = pd.read_csv(csv_file)
-        self.folder_dir = folder_dir
+        self.img_dir = img_dir
         self.transform = transform
         self.file_names = self.dataframe.file_name.values.tolist()
         self.labels = self.dataframe.labels.values.tolist()
@@ -81,7 +81,7 @@ class MultiClassPathologyDataset(Dataset):
             ### Returns ###
             image, label array : (512x512, [1x1]) at that index.
         """
-        image = Image.open(os.path.join(self.folder_dir, self.file_names[index])).convert("RGB")
+        image = Image.open(os.path.join(self.img_dir, self.file_names[index])).convert("RGB")
         label = self.labels[index]
         label = torch.tensor(np.array(label, dtype=float))
         if self.transform:
