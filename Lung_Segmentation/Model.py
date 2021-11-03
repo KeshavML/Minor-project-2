@@ -22,7 +22,7 @@ class DoubleConv(nn.Module):
         return self.conv(x)
 
 class LungSegmentation(nn.Module):
-    def __init__(self, in_channels=1, out_channels=1, features=[16, 32, 64, 128]):
+    def __init__(self, in_channels=1, out_channels=1, features=[16, 32, 64]):
         super(LungSegmentation, self).__init__()
         self.ups = nn.ModuleList()
         self.downs = nn.ModuleList()
