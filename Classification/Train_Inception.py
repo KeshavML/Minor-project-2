@@ -82,11 +82,12 @@ def main():
         except FileNotFoundError as e:
             print(f"{e}: Model not found.")
 
-    print(val_loader)
+    # for idx, data in enumerate(val_loader):
+        # print(data)
     # print(dir(val_loader))
     # print(help(val_loader))
-    print(val_loader[0])
-    exit()
+    # print(val_loader[0])
+    # exit()
     # check_accuracy(val_loader, model, device=DEVICE)
 
     scaler = torch.cuda.amp.GradScaler()

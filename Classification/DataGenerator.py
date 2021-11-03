@@ -84,12 +84,15 @@ class MultiClassPathologyDataset(Dataset):
         image = Image.open(os.path.join(self.img_dir, self.file_names[index])).convert("RGB")
         label = self.labels[index]
         label = torch.tensor(np.array(label, dtype=float))
+        # sample = (image,label)
+        # print(*sample)
         if self.transform:
             image = self.transform(image)
             label = torch.tensor(np.array(label, dtype=float))
-        
+            # sample = self.transform(*sample)
         return image, label
-
+        # return sample
+        
 def test_Covid():
     dataset = CovidDataset("./Dataset/Covid/Covid_data.csv", "./Dataset/Covid/Xrays/")
     # print(dataset.file_names)
@@ -109,6 +112,7 @@ def test_Pathology():
     # print(dataset.dataframe)
     print("Length of the dataset",len(dataset))
     xray, label = dataset[0]
+    # print(type(label))
     print("Xray datatype : ",type(xray))
     print("Label datatype : ",type(label))
     print("Xray shape : ",xray.size)
