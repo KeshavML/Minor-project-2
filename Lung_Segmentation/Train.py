@@ -15,7 +15,7 @@ LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 1
 NUM_EPOCHS = 5
-#= 4
+NUM_WORKERS = 4
 # IMAGE_HEIGHT = 512
 # IMAGE_WIDTH = 512
 PIN_MEMORY = False
@@ -74,7 +74,7 @@ def main():
 
     train_loader, val_loader = get_loaders(
         TRAIN_IMG_DIR, TRAIN_MASK_DIR, VAL_IMG_DIR, VAL_MASK_DIR,
-        BATCH_SIZE, train_transform, val_transforms, PIN_MEMORY)
+        BATCH_SIZE, train_transform, val_transforms, NUM_WORKERS, PIN_MEMORY)
 
     if LOAD_MODEL:
         try:

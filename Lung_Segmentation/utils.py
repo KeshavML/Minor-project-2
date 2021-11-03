@@ -22,18 +22,18 @@ def load_checkpoint(checkpoint, model):
         
 def get_loaders(train_dir, train_maskdir, val_dir,
             val_maskdir, batch_size, train_transform,
-            val_transform, pin_memory=True):
+            val_transform, num_workers, pin_memory=True):
 
     train_ds = LungSegmentationDataset(Xray_dir=train_dir, mask_dir=train_maskdir, 
                 transform=train_transform)
 
-    train_loader = DataLoader(train_ds, batch_size=batch_size,
+    train_loader = DataLoader(train_ds, batch_size=batch_size, num_workers=num_workers,
                 pin_memory=pin_memory, shuffle=True)
 
     val_ds = LungSegmentationDataset(Xray_dir=val_dir, mask_dir=val_maskdir,
                 transform=val_transform)
 
-    val_loader = DataLoader(val_ds, batch_size=batch_size, 
+    val_loader = DataLoader(val_ds, batch_size=batch_size,  num_workers=num_workers,
                 pin_memory=pin_memory, shuffle=False)
 
     return train_loader, val_loader
