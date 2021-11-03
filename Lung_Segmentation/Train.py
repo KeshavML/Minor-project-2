@@ -76,6 +76,9 @@ def main():
         TRAIN_IMG_DIR, TRAIN_MASK_DIR, VAL_IMG_DIR, VAL_MASK_DIR,
         BATCH_SIZE, train_transform, val_transforms, NUM_WORKERS, PIN_MEMORY)
 
+    print(dir(val_loader))
+    exit()
+
     if LOAD_MODEL:
         try:
             load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)
