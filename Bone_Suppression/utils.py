@@ -39,13 +39,13 @@ def get_loaders( train_dir, train_maskdir, val_dir, val_maskdir, batch_size,
         train_loader    : Training dataloader
         val_loader      : Validation dataloader
     """
-    train_ds = BoneSuppressionDataset(image_dir=train_dir, mask_dir=train_maskdir,
+    train_ds = BoneSuppressionDataset(Xray_dir=train_dir, mask_dir=train_maskdir,
                 transform=train_transform)
 
     train_loader = DataLoader(train_ds, batch_size=batch_size, num_workers=num_workers,
                 pin_memory=pin_memory,shuffle=True)
 
-    val_ds = BoneSuppressionDataset(image_dir=val_dir, mask_dir=val_maskdir,
+    val_ds = BoneSuppressionDataset(Xray_dir=val_dir, mask_dir=val_maskdir,
                 transform=val_transform)
 
     val_loader = DataLoader(val_ds, batch_size=batch_size, num_workers=num_workers,

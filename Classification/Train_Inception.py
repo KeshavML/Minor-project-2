@@ -37,7 +37,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
             predictions = model(data)
             # print(1,predictions.size()) #[batch, channels,512,512] [2,1,512,512]
             # print(2,targets.size()) #[batch, channels,512,512, channels_orig] [2,1,512,512,3]
-            targets = targets[:,:,:,:,0]
+            targets = targets[:,0]
             # print(3,targets.size()) #[batch, channels,512,512] [2,1,512,512]
             loss = loss_fn(predictions, targets)
 
@@ -54,12 +54,12 @@ def get_transforms():
     train_transform = A.Compose([
         A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
         A.Rotate(limit=35, p=1.0), A.HorizontalFlip(p=0.5), A.VerticalFlip(p=0.1),
-        A.Normalize(mean=[0.0,0.0,0.0], std=[1.0,1.0,1.0], max_pixel_value=255.0),
+        A.Normalize(mean=[0.0], std=[1.0], max_pixel_value=255.0),
         ToTensorV2()])
 
     val_transform = A.Compose([
         A.Resize(height=IMAGE_HEIGHT, width =IMAGE_WIDTH),
-        A.Normalize(mean=[0.0,0.0,0.0], std=[1.0,1.0,1.0], max_pixel_value=255.0),
+        A.Normalize(mean=0.0, std=[1.0], max_pixel_value=255.0),
         ToTensorV2()])
 
     return train_transform, val_transform
@@ -84,7 +84,7 @@ def main():
 
     # for idx, data in enumerate(val_loader):
         # print(data)
-    # print(dir(val_loader))
+    print(type(val_loader))
     # print(help(val_loader))
     # print(val_loader[0])
     # exit()

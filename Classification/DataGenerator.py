@@ -81,7 +81,8 @@ class MultiClassPathologyDataset(Dataset):
             ### Returns ###
             image, label array : (512x512, [1x1]) at that index.
         """
-        image = Image.open(os.path.join(self.img_dir, self.file_names[index])).convert("RGB")
+        image = Image.open(os.path.join(self.img_dir, self.file_names[index]))
+        image = np.array(image).expand_dims(image,-1)
         label = self.labels[index]
         label = torch.tensor(np.array(label, dtype=float))
         # sample = (image,label)

@@ -1,7 +1,6 @@
 import torch
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-from CustomTransform import ChannelDropoutCustom
 from tqdm import tqdm
 import torch.nn as nn
 import torch.optim as optim
@@ -13,11 +12,11 @@ from utils import (load_checkpoint, save_checkpoint, get_loaders, check_accuracy
 # Hyperparameters etc.
 LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-BATCH_SIZE = 4
-NUM_EPOCHS = 50
-NUM_WORKERS = 2
-IMAGE_HEIGHT = 512  # 1280 originally
-IMAGE_WIDTH = 512  # 1918 originally
+BATCH_SIZE = 2
+NUM_EPOCHS = 2
+NUM_WORKERS = 4
+# IMAGE_HEIGHT = 512  # 1280 originally
+# IMAGE_WIDTH = 512  # 1918 originally
 PIN_MEMORY = True if torch.cuda.is_available() else False
 LOAD_MODEL = True
 TRAIN_IMG_DIR = "Dataset/BSE_Xrays/"
@@ -58,12 +57,10 @@ def get_transforms():
         train_transform and val_transform
     """
     train_transform = A.Compose([
-            A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
             A.Rotate(limit=10, p=0.4), A.HorizontalFlip(p=0.5),
-            A.Normalize(mean=[0.0], std=[1.0], max_pixel_value=255.0,), ToTensorV2()])
+            A.Normalize(mean=0.0, std=1.0, max_pixel_value=255.0,), ToTensorV2()])
     
     val_transform = A.Compose([
-            A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
             A.Normalize(mean=0.0, std=1.0, max_pixel_value=255.0,), ToTensorV2()])
     
     return train_transform, val_transform

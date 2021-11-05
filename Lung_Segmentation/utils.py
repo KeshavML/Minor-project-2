@@ -47,7 +47,7 @@ def check_accuracy(loader, model, device="cuda"):
     with torch.no_grad():
         for x, y in loader:
             x = x.to(device)
-            # print(1,y.size()) #[batch,512,512,channels] [2,512,512,3]
+            # print(1,y.size()) #[batch,512,512,channels] [2,512,512,1]
             y = y[:,:,:,0]
             # print(1,y.size()) #[batch,512,512] [2,512,512]
             y = y.to(device).unsqueeze(1)
