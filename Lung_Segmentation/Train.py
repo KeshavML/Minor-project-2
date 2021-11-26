@@ -80,7 +80,7 @@ def main():
         try:
             load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)
         except FileNotFoundError as e:
-            print(f"{e}: Model not found.")
+            print(f"{e}: Model not found. Training from scratch. :-)")
 
     check_accuracy(val_loader, model, device=DEVICE)
 
