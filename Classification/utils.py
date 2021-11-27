@@ -53,7 +53,7 @@ def check_accuracy(loader, model, device="cuda"):
 
     with torch.no_grad():
         for x, y in loader:
-            x = x.to(device)
+            x = x['image'].to(device)
             y = y
             y = y.to(device).unsqueeze(1)
             preds = torch.sigmoid(model(x))
@@ -69,10 +69,10 @@ def check_accuracy(loader, model, device="cuda"):
     # print(f"Dice score: {dice_score/len(loader)}")
     model.train()
 
-def save_predictions_as_imgs(epoch, loader, model, folder="saved_images/", device="cuda"):
+def save_predictions_as_imgs(epoch, loader, model, folder="Saved Images", device="cuda"):
     model.eval()
     for idx, (x, y) in enumerate(loader):
-        x = x.to(device=device)
+        x = x['image'].to(device=device)
         with torch.no_grad():
             preds = torch.sigmoid(model(x))
             preds = (preds > 0.5).float()

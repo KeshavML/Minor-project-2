@@ -14,7 +14,7 @@ from utils import (load_checkpoint, save_checkpoint, get_loaders_multiclass_path
 LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 1
-NUM_EPOCHS = 2
+NUM_EPOCHS = 1
 NUM_WORKERS = 4
 IMAGE_HEIGHT = 512
 IMAGE_WIDTH = 512
@@ -29,7 +29,9 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
     loop = tqdm(loader)
 
     for batch_idx, (data,targets) in enumerate(loop):
-        data = data.to(device=DEVICE)
+        # print(data)
+        # break
+        data = data['image'].to(device=DEVICE)
         targets = targets.float().unsqueeze(1).to(device=DEVICE)
 
         # forward
@@ -104,7 +106,7 @@ def main():
             check_accuracy(val_loader, model, device=DEVICE)
             # print some examples to a folder
             save_predictions_as_imgs(epoch, val_loader, model, 
-                    folder="saved_images/", device=DEVICE)
+                    folder="Saved Images", device=DEVICE)
         gc.collect()
 
 if __name__ == "__main__":
