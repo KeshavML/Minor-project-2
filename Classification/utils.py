@@ -2,14 +2,71 @@ import torch
 import torchvision
 from DataGenerator import CovidDataset, MultiClassPathologyDataset
 from torch.utils.data import DataLoader
+import datetime
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
+import os
 
-def save_checkpoint(state, filename="my_checkpoint.pth.tar"):
-    print("=> Saving checkpoint")
-    torch.save(state, filename)
+# Index:
+# 1) save_checkpoint
+# 2) load_checkpoint
+# 3) getModel
+# 4) get_transforms
+# 5) get_loaders_multiclass_pathology_dataset
+# 6) get_loaders_covid_dataset
+# 7) check_accuracy
+# 8) save_predictions_as_imgs
+
+def save_checkpoint(state, filename="../"):
+    now = datetime.now()
+    current_time = now.strftime("%H_%M_%S")
+    file_path = os.path.join(filename,current_time)
+    if not os.path.isdir(file_path):
+        os.makedirs(file_path)
+    print(f"=> Saving checkpoint: {current_time}")
+    torch.save(state, file_path+f"/{current_time}.pth.tar")
 
 def load_checkpoint(checkpoint, model):
-    print("=> Loading checkpoint")
+    print(f"=> Loading checkpoint")
     model.load_state_dict(checkpoint["state_dict"])
+
+def getModel():
+    while True:
+        model_name = input("Select the model(integer input):\n1) Inception\n2) ResNet34\n3) SqueezeNet\n")
+        if model_name == '1':
+            aux_logits = input("\nAuxilliary inputs?(Boolean)\n")
+            print()
+            if aux_logits:
+                aux_logits = True
+            else:
+                aux_logits = False
+            from Inception import Inception
+            model = Inception(aux_logits=aux_logits, num_classes=9)
+        elif model_name == '2':
+            from ResNet34 import ResNet34
+            model = ResNet34(img_channel=1, num_classes=9)
+        elif model_name == '3':
+            from SqueezeNet import squeezenet
+            model = squeezenet()            
+        else:
+            print("\nInvalid input, try again:\n")
+        if 'model' in locals():
+            break
+    return model
+
+def get_transforms(IMAGE_HEIGHT, IMAGE_WIDTH):
+    train_transform = A.Compose([
+        A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
+        A.Rotate(limit=35, p=1.0), A.HorizontalFlip(p=0.5), A.VerticalFlip(p=0.1),
+        A.Normalize(mean=[0.0], std=[1.0], max_pixel_value=255.0),
+        ToTensorV2()])
+
+    val_transform = A.Compose([
+        A.Resize(height=IMAGE_HEIGHT, width =IMAGE_WIDTH),
+        A.Normalize(mean=0.0, std=[1.0], max_pixel_value=255.0),
+        ToTensorV2()])
+
+    return train_transform, val_transform
 
 def get_loaders_multiclass_pathology_dataset(csv_train, img_dir_train, csv_val, img_dir_val, 
         batch_size, train_transform, val_transform,
@@ -77,7 +134,9 @@ def save_predictions_as_imgs(epoch, loader, model, folder="Saved Images", device
             preds = torch.sigmoid(model(x))
             preds = (preds > 0.5).float()
 
+        # Predicted
         torchvision.utils.save_image(preds, f"{folder}/{epoch}_pred_{idx}.png")
+        # GT
         torchvision.utils.save_image(y.unsqueeze(1), f"{folder}/{epoch}_{idx}.png")
 
     model.train()

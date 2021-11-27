@@ -1,14 +1,10 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-# from CustomTransform import ChannelDropoutCustom
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
 from tqdm import tqdm
-from Inception import Inception
 import gc
-from utils import (load_checkpoint, save_checkpoint, get_loaders_multiclass_pathology_dataset, 
-                    check_accuracy, save_predictions_as_imgs)
+import os
+from utils import *
 
 # Hyperparameters etc.
 LEARNING_RATE = 1e-4
@@ -27,20 +23,14 @@ VAL_CSV = "./Dataset/LungPathology/CXR8_data.csv"
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):
     loop = tqdm(loader)
-
     for batch_idx, (data,targets) in enumerate(loop):
-        # print(data)
-        # break
         data = data['image'].to(device=DEVICE)
         targets = targets.float().unsqueeze(1).to(device=DEVICE)
 
         # forward
         with torch.cuda.amp.autocast():
             predictions = model(data)
-            # print(1,predictions.size()) #[batch, channels,512,512] [2,1,512,512]
-            # print(2,targets.size()) #[batch, channels,512,512, channels_orig] [2,1,512,512,3]
             targets = targets[:,0]
-            # print(3,targets.size()) #[batch, channels,512,512] [2,1,512,512]
             loss = loss_fn(predictions, targets)
 
         # backward
@@ -48,29 +38,12 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         scaler.scale(loss).backward()
         scaler.step(optimizer)
         scaler.update()
-
         # update tqdm loop
         loop.set_postfix(loss=loss.item())
         
-def get_transforms():
-    train_transform = A.Compose([
-        A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
-        A.Rotate(limit=35, p=1.0), A.HorizontalFlip(p=0.5), A.VerticalFlip(p=0.1),
-        A.Normalize(mean=[0.0], std=[1.0], max_pixel_value=255.0),
-        ToTensorV2()])
-
-    val_transform = A.Compose([
-        A.Resize(height=IMAGE_HEIGHT, width =IMAGE_WIDTH),
-        A.Normalize(mean=0.0, std=[1.0], max_pixel_value=255.0),
-        ToTensorV2()])
-
-    return train_transform, val_transform
-
 def main():
-
-    train_transform, val_transforms = get_transforms()
-
-    model = Inception(aux_logits=False, num_classes=9).to(DEVICE)
+    train_transform, val_transforms = get_transforms(IMAGE_HEIGHT=512,IMAGE_WIDTH=512)
+    model = getModel().to(DEVICE)    
     loss_fn = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
@@ -80,16 +53,13 @@ def main():
 
     if LOAD_MODEL:
         try:
-            load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)
+            # time thingy
+            models = os.listdir("../")
+            models = [os.path.basename(each) for each in models]
+            load_checkpoint(torch.load("../{max_time}.pth.tar"), model)
         except FileNotFoundError as e:
             print(f"{e}: Model not found.")
 
-    # for idx, data in enumerate(val_loader):
-        # print(data)
-    print(type(val_loader))
-    # print(help(val_loader))
-    # print(val_loader[0])
-    # exit()
     # check_accuracy(val_loader, model, device=DEVICE)
 
     scaler = torch.cuda.amp.GradScaler()
