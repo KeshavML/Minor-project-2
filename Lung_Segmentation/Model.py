@@ -1,8 +1,8 @@
-import torch
-import torch.nn as nn
 import torchvision.transforms.functional as TF
-import warnings
 from torchsummary import summary
+import torch.nn as nn
+import warnings
+import torch
 
 warnings.filterwarnings("ignore")
 

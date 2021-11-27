@@ -1,10 +1,9 @@
-# Datagenerator
-import os
-import pandas as pd
-from PIL import Image
 from torch.utils.data import Dataset
+from PIL import Image
+import pandas as pd
 import numpy as np
 import torch
+import os
 
 class CovidDataset(Dataset):
     """
@@ -67,7 +66,7 @@ class MultiClassPathologyDataset(Dataset):
         for each in self.labels:
             for _ in each:
                 _ = float(_)
-        # self.labels = [each for each in self.labels]
+
     def __len__(self):
         """
             Returns total num of xrays. (integer)
@@ -87,14 +86,9 @@ class MultiClassPathologyDataset(Dataset):
         image = np.expand_dims(np.array(image),-1)
         label = self.labels[index]
         label = torch.tensor(np.array(label, dtype=np.float32))
-        # sample = (image,label)
-        # print(*sample)
         if self.transform:
             image = self.transform(image=image)
-            # label = torch.tensor(np.array(label, dtype=np.float32))
-            # sample = self.transform(*sample)
         return image, label
-        # return sample
         
 def test_Covid():
     dataset = CovidDataset("./Dataset/Covid/Covid_data.csv", "./Dataset/Covid/Xrays/")

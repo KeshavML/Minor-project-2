@@ -1,10 +1,10 @@
-import torch
-import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
+import torch.nn as nn
+from utils import *
+import torch
 import gc
 import os
-from utils import *
 
 # Hyperparameters etc.
 LEARNING_RATE = 1e-4

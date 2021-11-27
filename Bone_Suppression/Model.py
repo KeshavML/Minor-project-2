@@ -1,11 +1,12 @@
-# import torch
-import torch.nn as nn
-from torchsummary import summary
 # from torch.utils.tensorboard import SummaryWriter
+from torchsummary import summary
+import torch.nn.functional as F
+import torch.nn as nn
 import warnings
+import torch
+
 warnings.filterwarnings("ignore")
 # writer = SummaryWriter("runs/AE")
-import torch.nn.functional as F
 
 class BoneSuppression(nn.Module):
     def __init__(self, in_channels=1, out_channels=1):

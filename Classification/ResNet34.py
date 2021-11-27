@@ -1,7 +1,7 @@
-import torch
+from torchsummary import summary
 import torch.nn as nn
 import warnings
-from torchsummary import summary
+# import torch
 
 warnings.filterwarnings("ignore")
 
@@ -82,7 +82,6 @@ class ResNet(nn.Module):
         
         self.fc2 = nn.Linear(128, 64)
         self.fc3 = nn.Linear(64, num_classes)
-
 
     def forward(self, x):
         x = self.conv1(x)

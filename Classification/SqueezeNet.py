@@ -1,8 +1,8 @@
-import torch
-import torch.nn as nn
-from torch.autograd import Variable
-import warnings
 from torchsummary import summary
+import torch.nn as nn
+import warnings
+import torch
+# from torch.autograd import Variable
 
 warnings.filterwarnings("ignore")
 
@@ -89,12 +89,9 @@ class SqueezeNet(nn.Module):
         x = self.fire8(x)
         x = self.maxpool3(x)
         x = self.fire9(x)
-        # print(1,x.shape)
         x = self.conv2(x)
-        # print(2,x.shape)
         x = self.avg_pool(x)
         x = x.reshape(x.shape[0], -1)
-        # print(2,x.shape)
         x = self.dropout1(x)
         x = self.fc1(x)
         x = self.dropout2(x)

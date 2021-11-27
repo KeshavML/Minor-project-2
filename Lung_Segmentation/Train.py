@@ -1,13 +1,10 @@
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
-from tqdm import tqdm
 from Model import LungSegmentation
+import torch.optim as optim
+import torch.nn as nn
+from tqdm import tqdm
+from utils import *
+import torch
 import gc
-from utils import (load_checkpoint, save_checkpoint, get_loaders, 
-                    check_accuracy, save_predictions_as_imgs)
 
 # Hyperparameters etc.
 LEARNING_RATE = 1e-4
@@ -35,10 +32,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # forward
         with torch.cuda.amp.autocast():
             predictions = model(data)
-            # print(1,predictions.size()) #[batch, channels,512,512] [2,1,512,512]
-            # print(2,targets.size()) #[batch, channels,512,512, channels_orig] [2,1,512,512,1]
             targets = targets[:,:,:,:,0]
-            # print(3,targets.size()) #[batch, channels,512,512] [2,1,512,512]
             loss = loss_fn(predictions, targets)
 
         # backward
@@ -50,22 +44,9 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # update tqdm loop
         loop.set_postfix(loss=loss.item())
 
-def get_transforms():
-    train_transform = A.Compose([
-        A.Rotate(limit=35, p=1.0), A.HorizontalFlip(p=0.5), A.VerticalFlip(p=0.1),
-        A.Normalize(mean=[0.0], std=[1.0], max_pixel_value=255.0),
-        ToTensorV2()])
-
-    val_transform = A.Compose([
-        A.Normalize(mean=[0.0], std=[1.0], max_pixel_value=255.0),
-        ToTensorV2()])
-
-    return train_transform, val_transform
-
 def main():
 
     train_transform, val_transforms = get_transforms()
-
     model = LungSegmentation(in_channels=1, out_channels=1).to(DEVICE)
     loss_fn = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
@@ -73,9 +54,6 @@ def main():
     train_loader, val_loader = get_loaders(
         TRAIN_IMG_DIR, TRAIN_MASK_DIR, VAL_IMG_DIR, VAL_MASK_DIR,
         BATCH_SIZE, train_transform, val_transforms, NUM_WORKERS, PIN_MEMORY)
-
-    # print(type(val_loader))
-    # exit()
 
     if LOAD_MODEL:
         try:
@@ -87,7 +65,6 @@ def main():
 
     scaler = torch.cuda.amp.GradScaler()
     
-    # exit()
     for epoch in range(NUM_EPOCHS):
         train_fn(train_loader, model, optimizer, loss_fn, scaler)
         # save model

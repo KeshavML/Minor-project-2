@@ -1,8 +1,18 @@
-import torch
+from DataGenerator import BoneSuppressionDataset
+from albumentations.pytorch import ToTensorV2
+from torch.utils.data import DataLoader
+import albumentations as A
 import torchvision
 import numpy as np
-from DataGenerator import BoneSuppressionDataset
-from torch.utils.data import DataLoader
+import torch
+
+# Index:
+# 1) save_checkpoint
+# 2) load_checkpoint
+# 3) get_transforms
+# 4) get_loaders
+# 5) check_accuracy
+# 6) save_predictions_as_imgs
 
 def save_checkpoint(state, filename="./runs/my_checkpoint.pth.tar"):
     """
@@ -20,6 +30,22 @@ def load_checkpoint(checkpoint, model):
         print("=> Loading checkpoint")
     except FileNotFoundError as e:
         print(f"{e}: Model not found.")
+
+def get_transforms():
+    """
+        Image augmentations and transforms.
+
+        ### Returns ###
+        train_transform and val_transform
+    """
+    train_transform = A.Compose([
+            A.Rotate(limit=10, p=0.4), A.HorizontalFlip(p=0.5),
+            A.Normalize(mean=0.0, std=1.0, max_pixel_value=255.0,), ToTensorV2()])
+    
+    val_transform = A.Compose([
+            A.Normalize(mean=0.0, std=1.0, max_pixel_value=255.0,), ToTensorV2()])
+    
+    return train_transform, val_transform
 
 def get_loaders( train_dir, train_maskdir, val_dir, val_maskdir, batch_size, 
             train_transform, val_transform, num_workers=4, pin_memory=True):

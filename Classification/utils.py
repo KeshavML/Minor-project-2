@@ -1,10 +1,10 @@
-import torch
-import torchvision
 from DataGenerator import CovidDataset, MultiClassPathologyDataset
-from torch.utils.data import DataLoader
-import datetime
-import albumentations as A
 from albumentations.pytorch import ToTensorV2
+from torch.utils.data import DataLoader
+import albumentations as A
+import torchvision
+import datetime
+import torch
 import os
 
 # Index:

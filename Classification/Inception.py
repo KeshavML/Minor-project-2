@@ -1,9 +1,8 @@
-
-# Imports
-import torch
 from torchsummary import summary
 from torch import nn
 import warnings
+import torch
+
 warnings.filterwarnings("ignore")
 
 class Inception(nn.Module):
@@ -76,35 +75,25 @@ class Inception(nn.Module):
             self.aux1 = self.aux2 = None
 
     def forward(self, x):
-        # print(0,x.shape)
         x = self.conv1(x)
-        # print(1,x.shape)
         x = self.maxpool1(x)
-        # print(2,x.shape)
         x = self.conv2(x)
-        # print(3,x.shape)
         # x = self.conv3(x)
         x = self.maxpool2(x)
-        # print(4,x.shape)
 
         x = self.inception3a(x)
-        # print(5,x.shape)
         # x = self.inception3b(x)
         x = self.maxpool3(x)
-        # print(6,x.shape)
 
         x = self.inception4a(x)
-        # print(7,x.shape)
 
         # Auxiliary Softmax classifier 1
         if self.aux_logits and self.training:
             aux1 = self.aux1(x)
 
         x = self.inception4b(x)
-        # print(8,x.shape)
         # x = self.inception4c(x)
         x = self.inception4d(x)
-        # print(9,x.shape)
 
         # Auxiliary Softmax classifier 2
         if self.aux_logits and self.training:
@@ -112,19 +101,12 @@ class Inception(nn.Module):
 
         # x = self.inception4e(x)
         x = self.maxpool4(x)
-        # print(10,x.shape)
         x = self.inception5a(x)
-        # print(11,x.shape)
         x = self.inception5b(x)
-        # print(12, x.shape)
         x = self.maxpool5(x)
-        # print(13, x.shape)
         x = self.inception6a(x)
-        # print(14, x.shape)
         x = self.avgpool(x)
-        # print(15,x.shape)
         x = x.reshape(x.shape[0], -1)
-        # print(16,x.shape)
         x = self.dropout1(x)
         x = self.fc1(x)
         x = self.dropout2(x)

@@ -1,13 +1,10 @@
-import torch
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
+from Model import BoneSuppression
+import torch.optim as optim
 from tqdm import tqdm
 import torch.nn as nn
-import torch.optim as optim
-from Model import BoneSuppression
+from utils import *
+import torch
 import gc
-from utils import (load_checkpoint, save_checkpoint, get_loaders, check_accuracy, 
-                save_predictions_as_imgs)
 
 # Hyperparameters etc.
 LEARNING_RATE = 1e-4
@@ -48,22 +45,6 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
 
         # update tqdm loop
         loop.set_postfix(loss=loss.item())
-
-def get_transforms():
-    """
-        Image augmentations and transforms.
-
-        ### Returns ###
-        train_transform and val_transform
-    """
-    train_transform = A.Compose([
-            A.Rotate(limit=10, p=0.4), A.HorizontalFlip(p=0.5),
-            A.Normalize(mean=0.0, std=1.0, max_pixel_value=255.0,), ToTensorV2()])
-    
-    val_transform = A.Compose([
-            A.Normalize(mean=0.0, std=1.0, max_pixel_value=255.0,), ToTensorV2()])
-    
-    return train_transform, val_transform
 
 def main():
     train_transform, val_transform = get_transforms()
