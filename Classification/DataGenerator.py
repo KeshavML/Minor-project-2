@@ -37,10 +37,11 @@ class CovidDataset(Dataset):
             ### Returns ###
             image, label array : (512x512, [1x1]) at that index.
         """
-        
+        # image = Image.open(os.path.join(self.img_dir, self.file_names[index]))
         img_path = os.path.join(self.img_dir, self.dataframe.iloc[index].file_name) # column 1 : file_name
-        image = Image.open(img_path).convert("RGB")
-        y_label = torch.tensor(int(self.dataframe.iloc[index].labels)) # column 2 : labels
+        image = Image.open(img_path).resize((512,512))
+        image = np.expand_dims(np.array(image),-1)
+        y_label = torch.tensor(np.array(int(self.dataframe.iloc[index].labels), dtype=np.float32)) # column 2 : labels
 
         if self.transform:
             image = self.transform(image)
@@ -81,15 +82,16 @@ class MultiClassPathologyDataset(Dataset):
             ### Returns ###
             image, label array : (512x512, [1x1]) at that index.
         """
-        image = Image.open(os.path.join(self.img_dir, self.file_names[index]))
-        image = np.array(image, dtype=np.float32).expand_dims(image,-1)
+        img_path = os.path.join(self.img_dir, self.file_names[index])
+        image = Image.open(img_path).resize((512,512))
+        image = np.expand_dims(np.array(image),-1)
         label = self.labels[index]
         label = torch.tensor(np.array(label, dtype=np.float32))
         # sample = (image,label)
         # print(*sample)
         if self.transform:
-            image = self.transform(image)
-            label = torch.tensor(np.array(label, dtype=np.float32))
+            image = self.transform(image=image)
+            # label = torch.tensor(np.array(label, dtype=np.float32))
             # sample = self.transform(*sample)
         return image, label
         # return sample
@@ -103,7 +105,7 @@ def test_Covid():
     xray, label = dataset[0]
     print("Xray datatype : ",type(xray))
     print("Label datatype : ",type(label))
-    print("Xray shape : ",xray.size)
+    print("Xray shape : ",xray.shape)
     print("Label : ",label)
 
 def test_Pathology():
@@ -116,7 +118,8 @@ def test_Pathology():
     # print(type(label))
     print("Xray datatype : ",type(xray))
     print("Label datatype : ",type(label))
-    print("Xray shape : ",xray.size)
+    print("Xray shape : ",xray.shape)
+    print("Label shape: ", label.size())
     print("Label : ",label)
 
 def main():

@@ -19,6 +19,7 @@ NUM_WORKERS = 4
 # IMAGE_WIDTH = 512
 PIN_MEMORY = False
 LOAD_MODEL = True
+
 TRAIN_IMG_DIR = "./Dataset/Training/Xrays/"
 TRAIN_MASK_DIR = "./Dataset/Training/Masks/"
 VAL_IMG_DIR = "./Dataset/Validation/Xrays/"
