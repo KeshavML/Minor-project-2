@@ -17,7 +17,7 @@ import os
 # 5) check_accuracy
 # 6) save_predictions_as_imgs
 
-def save_checkpoint(state, root="../../"):
+def save_checkpoint(state, root="../../OP/BS/runs/"):
     """
         Saves current model state to file -> filename
     """
@@ -76,8 +76,7 @@ def get_loaders( train_dir, train_maskdir, val_dir, val_maskdir, batch_size,
     train_ds = BoneSuppressionDataset(Xray_dir=train_dir, mask_dir=train_maskdir,
                 transform=train_transform)
 
-    train_loader = DataLoader(train_ds, batch_size=batch_size, num_workers=num_workers,
-                pin_memory=pin_memory,shuffle=True)
+    train_loader = DataLoader(train_ds, batch_size=batch_size, num_workers=num_workers,pin_memory=pin_memory,shuffle=True)
 
     val_ds = BoneSuppressionDataset(Xray_dir=val_dir, mask_dir=val_maskdir,
                 transform=val_transform)
@@ -116,7 +115,7 @@ def check_accuracy(loader, model, device="cuda"):
             mse_score += np.square(np.subtract(y,preds)).mean()
 
     # print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
-    print(f"MSE score: {mse_score/len(loader)}")
+    # print(f"MSE score: {mse_score/len(loader)}")
     model.train()
 
 def save_predictions_as_imgs(epoch, loader, model, folder="saved_images/", device="cuda"):

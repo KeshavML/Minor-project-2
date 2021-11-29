@@ -15,10 +15,10 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 PIN_MEMORY = True if torch.cuda.is_available() else False
 LOAD_MODEL = True
 
-LEARNING_RATE = parser.get('BS','learning_rate')
-BATCH_SIZE = parser.get('BS','batch_size')
-NUM_EPOCHS = parser.get('BS','num_epochs')
-NUM_WORKERS = parser.get('BS','num_workers')
+LEARNING_RATE = float(parser.get('BS','learning_rate'))
+BATCH_SIZE = int(parser.get('BS','batch_size'))
+NUM_EPOCHS = int(parser.get('BS','num_epochs'))
+NUM_WORKERS = int(parser.get('BS','num_workers'))
 
 LOAD_MODEL_PATH = parser.get('BS','load_model_path')
 SAVE_MODEL_PATH = parser.get('BS','save_model_path')
