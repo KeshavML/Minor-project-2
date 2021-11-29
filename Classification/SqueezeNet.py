@@ -119,4 +119,4 @@ def squeezenet(pretrained=False):
 
 if __name__ == '__main__':
     model = squeezenet()
-    print(summary(model, (1, 512, 512)))
+    summary(model, (1, 512, 512))

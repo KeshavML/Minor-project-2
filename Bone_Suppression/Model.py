@@ -55,7 +55,7 @@ def test():
     model = BoneSuppression(in_channels=1,out_channels=1)
     # preds = model(x)
     
-    print(summary(model, (1, 512, 512)))
+    summary(model, (1, 512, 512))
     ## Save model's structure
     # torch.save(model.state_dict(), './runs/Bone Suppression/Bone Suppression.pth')
 

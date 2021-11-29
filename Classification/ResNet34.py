@@ -144,7 +144,7 @@ def test():
     # y = model(torch.randn(3, 1, 512, 512))#.to("cuda")
     # print(y.size())
     # print(model)
-    print(summary(model, (1, 512, 512)))
+    summary(model, (1, 512, 512))
 
     ## Save model's structure
     # torch.save(model.state_dict(), './runs/Classification/ResNet/ResNet.pth')

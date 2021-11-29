@@ -245,7 +245,7 @@ if __name__ == "__main__":
     # output = aux1, aux2, x if aux_logits == True else x
     model = Inception(aux_logits=False, num_classes=9)
     # print(model(x).shape)
-    print(summary(model, (1, 512, 512)))
+    summary(model, (1, 512, 512))
     # print(model)
 
     # ## Save model's structure

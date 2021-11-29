@@ -17,14 +17,15 @@ import os
 # 7) check_accuracy
 # 8) save_predictions_as_imgs
 
-def save_checkpoint(state, filename="../"):
-    now = datetime.now()
-    current_time = now.strftime("%H_%M_%S")
-    file_path = os.path.join(filename,current_time)
-    if not os.path.isdir(file_path):
-        os.makedirs(file_path)
-    print(f"=> Saving checkpoint: {current_time}")
-    torch.save(state, file_path+f"/{current_time}.pth.tar")
+def save_checkpoint(state, filename="./checkpoint.pth.tar"):
+    # now = datetime.now()
+    # current_time = now.strftime("%H_%M_%S")
+    # file_path = os.path.join(filename,current_time)
+    # if not os.path.isdir(file_path):
+    #     os.makedirs(file_path)
+    # print(f"=> Saving checkpoint: {current_time}")
+    # torch.save(state, file_path+f"/{current_time}.pth.tar")
+    torch.save(state, filename)
 
 def load_checkpoint(checkpoint, model):
     print(f"=> Loading checkpoint")
