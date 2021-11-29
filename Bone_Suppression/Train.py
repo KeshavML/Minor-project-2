@@ -1,3 +1,4 @@
+from configparser import ConfigParser
 from Model import BoneSuppression
 import torch.optim as optim
 from tqdm import tqdm
@@ -6,20 +7,27 @@ from utils import *
 import torch
 import gc
 
-# Hyperparameters etc.
-LEARNING_RATE = 1e-4
+parser = ConfigParser()
+parser.read("../Other/ConfigParser/config.ini")
+
+# Parameters
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-BATCH_SIZE = 2
-NUM_EPOCHS = 2
-NUM_WORKERS = 4
-# IMAGE_HEIGHT = 512  # 1280 originally
-# IMAGE_WIDTH = 512  # 1918 originally
 PIN_MEMORY = True if torch.cuda.is_available() else False
 LOAD_MODEL = True
-TRAIN_IMG_DIR = "Dataset/BSE_Xrays/"
-TRAIN_MASK_DIR = "Dataset/Xrays/"
-VAL_IMG_DIR = "Dataset/BSE_Xrays/"
-VAL_MASK_DIR = "Dataset/Xrays/"
+
+LEARNING_RATE = parser.get('BS','learning_rate')
+BATCH_SIZE = parser.get('BS','batch_size')
+NUM_EPOCHS = parser.get('BS','num_epochs')
+NUM_WORKERS = parser.get('BS','num_workers')
+
+LOAD_MODEL_PATH = parser.get('BS','load_model_path')
+SAVE_MODEL_PATH = parser.get('BS','save_model_path')
+SAVE_IMAGES = parser.get('BS','save_images')
+
+TRAIN_IMG_DIR = parser.get('BS','train_img_dir')
+TRAIN_MASK_DIR = parser.get('BS','train_mask_dir')
+VAL_IMG_DIR = parser.get('BS','val_img_dir')
+VAL_MASK_DIR = parser.get('BS','val_mask_dir')
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):
     """
@@ -63,7 +71,8 @@ def main():
     # Load if model exists
     if LOAD_MODEL:
         try:
-            load_checkpoint(torch.load("./runs/my_checkpoint.pth.tar"), model)
+            latest_model_path = getLatestModel(root=LOAD_MODEL_PATH)
+            load_checkpoint(torch.load(f"{LOAD_MODEL_PATH}{latest_model_path}"), model)
         except Exception as e:
             print(f"Error {e}: Model not found!")
 
@@ -80,12 +89,12 @@ def main():
             "optimizer":optimizer.state_dict(),
         }
         if epoch % 5 == 0:
-            save_checkpoint(checkpoint)
+            save_checkpoint(checkpoint,root=f"{SAVE_MODEL_PATH}")
             # check accuracy
             check_accuracy(val_loader, model, device=DEVICE)
             # print some examples to a folder
             save_predictions_as_imgs(epoch, val_loader, model, 
-                    folder="saved_images/", device=DEVICE)
+                    folder=f"{SAVE_IMAGES}", device=DEVICE)
         gc.collect()
 
 if __name__ == "__main__":

@@ -2,9 +2,12 @@ from DataGenerator import BoneSuppressionDataset
 from albumentations.pytorch import ToTensorV2
 from torch.utils.data import DataLoader
 import albumentations as A
+import datetime as dt
 import torchvision
 import numpy as np
 import torch
+# import glob
+import os
 
 # Index:
 # 1) save_checkpoint
@@ -14,12 +17,12 @@ import torch
 # 5) check_accuracy
 # 6) save_predictions_as_imgs
 
-def save_checkpoint(state, filename="./runs/my_checkpoint.pth.tar"):
+def save_checkpoint(state, root="../../"):
     """
         Saves current model state to file -> filename
     """
     print("=> Saving checkpoint")
-    torch.save(state, filename)
+    torch.save(state, os.path.join(root, f"{dt.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')}.pth.tar"))
 
 def load_checkpoint(checkpoint, model):
     """
@@ -28,8 +31,13 @@ def load_checkpoint(checkpoint, model):
     try:
         model.load_state_dict(checkpoint["state_dict"])
         print("=> Loading checkpoint")
-    except FileNotFoundError as e:
-        print(f"{e}: Model not found.")
+    except Exception as e:
+        print(f"{e}: Model couldn't be loaded.")
+
+def getLatestModel(root):
+    files = os.listdir(root)
+    files.sort(reverse=True)
+    return files[0]
 
 def get_transforms():
     """
