@@ -46,20 +46,22 @@ config['CL'] = {
     'IMAGE_HEIGHT':'512',
     'IMAGE_WIDTH':'512',
     'LOAD_MODEL':'True',
+    # Pathology
     'LOAD_MODEL_PATH_PATHOLOGY':'../../OP/CL/pathology/runs/',
-    'LOAD_MODEL_PATH_COVID':'../../OP/CL/covid/runs/',
     'SAVE_MODEL_PATH_PATHOLOGY':'../../OP/CL/pathology/runs/',
-    'SAVE_MODEL_PATH_COVID':'../../OP/CL/covid/runs/',
     'SAVE_IMAGES_PATHOLOGY':'../../OP/CL/pathology/saved_images/',
+    'TRAIN_IMG_DIR_PATHOLOGY':'../../Data/CL/pathology/train/xrays/',
+    'TRAIN_CSV_PATHOLOGY':'../../Data/CL/pathology/train/train_pathology.csv',
+    'VAL_IMG_DIR_PATHOLOGY':'../../Data/CL/pathology/val/xrays/',
+    'VAL_CSV_PATHOLOGY':'../../Data/CL/pathology/val/val_pathology.csv',
+    # Covid
+    'LOAD_MODEL_PATH_COVID':'../../OP/CL/covid/runs/',
+    'SAVE_MODEL_PATH_COVID':'../../OP/CL/covid/runs/',
     'SAVE_IMAGES_COVID':'../../OP/CL/covid/saved_images/',
-    'TRAIN_IMG_DIR_PATHOLOGY':'../../Data/CL/pathology/train/Xrays/',
-    'TRAIN_IMG_DIR_COVID':'../../Data/CL/covid/train/Xrays/',
-    'TRAIN_CSV_PATHOLOGY':'../../Data/CL/pathology/train/Masks/CXR8_data.csv',
-    'TRAIN_CSV_COVID':'../../Data/CL/covid/train/Masks/Covid_data.csv',
-    'VAL_IMG_DIR_PATHOLOGY':'../../Data/CL/pathology/val/Xrays/',
-    'VAL_IMG_DIR_COVID':'../../Data/CL/covid/val/Xrays/',
-    'VAL_CSV_PATHOLOGY':'../../Data/CL/pathology/val/Masks/',
-    'VAL_CSV_COVID':'../../Data/CL/covid/val/Masks/',
+    'TRAIN_IMG_DIR_COVID':'../../Data/CL/covid/train/xrays/',
+    'TRAIN_CSV_COVID':'../../Data/CL/covid/train/train_covid.csv',
+    'VAL_IMG_DIR_COVID':'../../Data/CL/covid/val/xrays/',
+    'VAL_CSV_COVID':'../../Data/CL/covid/val/val_covid.csv',
 }
 
 with open("config.ini", 'w') as f:
