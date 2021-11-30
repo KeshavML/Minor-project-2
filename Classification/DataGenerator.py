@@ -58,7 +58,6 @@ class MultiClassPathologyDataset(Dataset):
         csv_file  : file_name = xray images' names, labels = [1x9] int list
         img_dir : directory with all the xrays
         transform  : transforms for augmentation
-
     """
     def __init__(self, csv_file, img_dir, transform = None):
         self.dataframe = pd.read_csv(csv_file)
@@ -96,7 +95,7 @@ class MultiClassPathologyDataset(Dataset):
         return image, label
         
 def test_Covid():
-    dataset = CovidDataset("./Dataset/Covid/Covid_data.csv", "./Dataset/Covid/Xrays/")
+    dataset = CovidDataset("../../Data/CL/covid/train/train_covid.csv", "../../Data/CL/covid/train/xrays/")
     # print(dataset.file_names)
     # print(dataset.labels) 
     # print(dataset.dataframe)
@@ -108,7 +107,7 @@ def test_Covid():
     print("Label : ",label)
 
 def test_Pathology():
-    dataset = MultiClassPathologyDataset("./Dataset/LungPathology/CXR8_data.csv", "./Dataset/LungPathology/Xrays/")
+    dataset = MultiClassPathologyDataset("../../Data/CL/pathology/train/train_pathology.csv", "../../Data/CL/pathology/train/xrays/")
     # print(dataset.file_names)
     # print(dataset.labels)
     # print(dataset.dataframe)

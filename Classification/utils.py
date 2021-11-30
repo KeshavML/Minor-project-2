@@ -3,7 +3,7 @@ from albumentations.pytorch import ToTensorV2
 from torch.utils.data import DataLoader
 import albumentations as A
 import torchvision
-import datetime
+import datetime as dt
 import torch
 import os
 
@@ -17,24 +17,28 @@ import os
 # 7) check_accuracy
 # 8) save_predictions_as_imgs
 
-def save_checkpoint(state, filename="./checkpoint.pth.tar"):
-    # now = datetime.now()
-    # current_time = now.strftime("%H_%M_%S")
-    # file_path = os.path.join(filename,current_time)
-    # if not os.path.isdir(file_path):
-    #     os.makedirs(file_path)
-    # print(f"=> Saving checkpoint: {current_time}")
-    # torch.save(state, file_path+f"/{current_time}.pth.tar")
-    torch.save(state, filename)
+def save_checkpoint(state, root="../../OP/BS/runs/inception/"):
+    """
+        Saves current model state to file -> filename
+    """
+    print("=> Saving checkpoint")
+    torch.save(state, os.path.join(root, f"{dt.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')}.pth.tar"))
 
 def load_checkpoint(checkpoint, model):
     print(f"=> Loading checkpoint")
     model.load_state_dict(checkpoint["state_dict"])
 
+def getLatestModel(root):
+    files = os.listdir(root)
+    files.sort(reverse=True)
+    return files[0]
+
 def getModel():
     while True:
         model_name = input("Select the model(integer input):\n1) Inception\n2) ResNet34\n3) SqueezeNet\n")
+        name = ''
         if model_name == '1':
+            name = 'inception'
             aux_logits = input("\nAuxilliary inputs?(Boolean)\n")
             print()
             if aux_logits:
@@ -44,16 +48,18 @@ def getModel():
             from Inception import Inception
             model = Inception(aux_logits=aux_logits, num_classes=9)
         elif model_name == '2':
+            name = 'resnet34'
             from ResNet34 import ResNet34
             model = ResNet34(img_channel=1, num_classes=9)
         elif model_name == '3':
+            name = 'squeezenet'
             from SqueezeNet import squeezenet
             model = squeezenet()            
         else:
             print("\nInvalid input, try again:\n")
         if 'model' in locals():
             break
-    return model
+    return model, name
 
 def get_transforms(IMAGE_HEIGHT, IMAGE_WIDTH):
     train_transform = A.Compose([
@@ -122,7 +128,7 @@ def check_accuracy(loader, model, device="cuda"):
             #     (preds + y).sum() + 1e-8
             # )
 
-    print(f"Got {num_correct}/{num_labels} with acc {num_correct/num_labels*100:.2f}")
+    # print(f"Got {num_correct}/{num_labels} with acc {num_correct/num_labels*100:.2f}")
 
     # print(f"Dice score: {dice_score/len(loader)}")
     model.train()
@@ -136,8 +142,10 @@ def save_predictions_as_imgs(epoch, loader, model, folder="Saved Images", device
             preds = (preds > 0.5).float()
 
         # Predicted
-        torchvision.utils.save_image(preds, f"{folder}/{epoch}_pred_{idx}.png")
+        predicted_path = f"{folder}{epoch}_pred_{idx}.png"
+        torchvision.utils.save_image(preds, predicted_path)
         # GT
-        torchvision.utils.save_image(y.unsqueeze(1), f"{folder}/{epoch}_{idx}.png")
+        gt_path = f"{folder}{epoch}_{idx}.png"
+        torchvision.utils.save_image(y.unsqueeze(1), gt_path)
 
     model.train()
