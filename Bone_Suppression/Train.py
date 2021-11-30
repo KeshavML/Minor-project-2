@@ -13,7 +13,7 @@ parser.read("../Other/ConfigParser/config.ini")
 # Parameters
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 PIN_MEMORY = True if torch.cuda.is_available() else False
-LOAD_MODEL = True
+LOAD_MODEL = parser.get('BS','load_model')
 
 LEARNING_RATE = float(parser.get('BS','learning_rate'))
 BATCH_SIZE = int(parser.get('BS','batch_size'))
@@ -56,33 +56,28 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
 
 def main():
     train_transform, val_transform = get_transforms()
-
     model = BoneSuppression(in_channels=1, out_channels=1).to(DEVICE)
     # Change the loss function
     loss_fn = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-    # Training and validation data loaders
     train_loader, val_loader = get_loaders(
-            TRAIN_IMG_DIR, TRAIN_MASK_DIR,
-            VAL_IMG_DIR, VAL_MASK_DIR, BATCH_SIZE,
-            train_transform, val_transform, NUM_WORKERS,PIN_MEMORY)
+            TRAIN_IMG_DIR, TRAIN_MASK_DIR,VAL_IMG_DIR, VAL_MASK_DIR, 
+            BATCH_SIZE, train_transform, val_transform, NUM_WORKERS,PIN_MEMORY)
 
-    # Load if model exists
     if LOAD_MODEL:
         try:
             latest_model_path = getLatestModel(root=LOAD_MODEL_PATH)
             load_checkpoint(torch.load(f"{LOAD_MODEL_PATH}{latest_model_path}"), model)
-        except Exception as e:
+        except FileNotFoundError as e:
             print(f"Error {e}: Model not found!")
 
     check_accuracy(val_loader, model, device=DEVICE)
+    
     scaler = torch.cuda.amp.GradScaler()
 
-    # Training loop
     for epoch in range(NUM_EPOCHS):
         train_fn(train_loader, model, optimizer, loss_fn, scaler)
-
         # save model
         checkpoint = {
             "state_dict": model.state_dict(),

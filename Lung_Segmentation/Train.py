@@ -1,3 +1,4 @@
+from configparser import ConfigParser
 from Model import LungSegmentation
 import torch.optim as optim
 import torch.nn as nn
@@ -6,21 +7,27 @@ from utils import *
 import torch
 import gc
 
-# Hyperparameters etc.
-LEARNING_RATE = 1e-4
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-BATCH_SIZE = 1
-NUM_EPOCHS = 1
-NUM_WORKERS = 4
-# IMAGE_HEIGHT = 512
-# IMAGE_WIDTH = 512
-PIN_MEMORY = True if torch.cuda.is_available() else False
-LOAD_MODEL = True
+parser = ConfigParser()
+parser.read("../Other/ConfigParser/config.ini")
 
-TRAIN_IMG_DIR = "./Dataset/Training/Xrays/"
-TRAIN_MASK_DIR = "./Dataset/Training/Masks/"
-VAL_IMG_DIR = "./Dataset/Validation/Xrays/"
-VAL_MASK_DIR = "./Dataset/Validation/Masks/"
+# Parameters
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+PIN_MEMORY = True if torch.cuda.is_available() else False
+LOAD_MODEL = parser.get('LS','load_model')
+
+LEARNING_RATE = float(parser.get('LS','learning_rate'))
+BATCH_SIZE = int(parser.get('LS','batch_size'))
+NUM_EPOCHS = int(parser.get('LS','num_epochs'))
+NUM_WORKERS = int(parser.get('LS','num_workers'))
+
+LOAD_MODEL_PATH = parser.get('LS','load_model_path')
+SAVE_MODEL_PATH = parser.get('LS','save_model_path')
+SAVE_IMAGES = parser.get('LS','save_images')
+
+TRAIN_IMG_DIR = parser.get('LS','train_img_dir')
+TRAIN_MASK_DIR = parser.get('LS','train_mask_dir')
+VAL_IMG_DIR = parser.get('LS','val_img_dir')
+VAL_MASK_DIR = parser.get('LS','val_mask_dir')
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):
     loop = tqdm(loader)
@@ -45,7 +52,6 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         loop.set_postfix(loss=loss.item())
 
 def main():
-
     train_transform, val_transforms = get_transforms()
     model = LungSegmentation(in_channels=1, out_channels=1).to(DEVICE)
     loss_fn = nn.BCEWithLogitsLoss()
@@ -57,9 +63,10 @@ def main():
 
     if LOAD_MODEL:
         try:
-            load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)
-        except FileNotFoundError as e:
-            print(f"{e}: Model not found. Training from scratch. :-)")
+            latest_model_path = getLatestModel(root=LOAD_MODEL_PATH)
+            load_checkpoint(torch.load(f"{LOAD_MODEL_PATH}{latest_model_path}"), model)
+        except Exception as e:
+            print(f"{e}: Model not found. Training from scratch.")
 
     check_accuracy(val_loader, model, device=DEVICE)
 
@@ -74,12 +81,12 @@ def main():
         }
         if epoch % 5 == 0:
             save_checkpoint(checkpoint)
+            # check accuracy
             check_accuracy(val_loader, model, device=DEVICE)
             # print some examples to a folder
             save_predictions_as_imgs(epoch, val_loader, model, 
-                    folder="saved_images/", device=DEVICE)
+                    folder=f"{SAVE_IMAGES}", device=DEVICE)
         gc.collect()
 
 if __name__ == "__main__":
     main()
-

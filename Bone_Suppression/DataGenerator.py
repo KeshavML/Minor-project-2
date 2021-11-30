@@ -1,7 +1,12 @@
+from configparser import ConfigParser
 from torch.utils.data import Dataset
 from PIL import Image
 import numpy as np
 import os
+
+parser = ConfigParser()
+parser.read("../Other/ConfigParser/config.ini")
+IMGAE_HEIGHT, IMAGE_WIDTH = int(parser.get('BS','image_height')),int(parser.get('BS','image_width'))
 
 class BoneSuppressionDataset(Dataset):
 	"""
@@ -37,9 +42,9 @@ class BoneSuppressionDataset(Dataset):
 		"""
 		xray_path = os.path.join(self.Xray_dir, self.Xrays[index])
 		mask_path = os.path.join(self.mask_dir, self.Xrays[index])
-		xray = np.array(Image.open(xray_path).resize((512,512)), dtype=np.float32)
+		xray = np.array(Image.open(xray_path).resize((IMGAE_HEIGHT, IMAGE_WIDTH)), dtype=np.float32)
 		xray = np.expand_dims(xray,-1)
-		mask = np.array(Image.open(mask_path).resize((512,512)), dtype=np.float32) # 0-255.0
+		mask = np.array(Image.open(mask_path).resize((IMGAE_HEIGHT, IMAGE_WIDTH)), dtype=np.float32) # 0-255.0
 		mask = np.expand_dims(mask,-1)
 		if self.test:
 			return xray, mask
@@ -51,7 +56,7 @@ class BoneSuppressionDataset(Dataset):
 		return xray, mask
 
 def main():
-	dataset = BoneSuppressionDataset("./Dataset/Xrays/", "./Dataset/BSE_Xrays/", test=True)
+	dataset = BoneSuppressionDataset("../../Data/BS/train/Xrays/", "../../Data/BS/train/BSE_Xrays/", test=True)
 	print("="*50)
 	print("Bone Suppression Data generator test : ")
 	print("*"*20)

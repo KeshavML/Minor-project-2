@@ -1,16 +1,28 @@
-import torch
-import torchvision
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
 from DataGenerator import LungSegmentationDataset
+from albumentations.pytorch import ToTensorV2
 from torch.utils.data import DataLoader
+import albumentations as A
+import datetime as dt
+import torchvision
+import numpy as np
+import torch
+import os
 
-def save_checkpoint(state, filename="my_checkpoint.pth.tar"):
+# Index:
+# 1) save_checkpoint
+# 2) load_checkpoint
+# 3) getLatestModel
+# 4) get_transforms
+# 5) get_loaders
+# 6) check_accuracy
+# 7) save_predictions_as_imgs
+
+def save_checkpoint(state, root="../../OP/LS/runs/"):
     """
         Saves current model state to file -> filename
     """
     print("=> Saving checkpoint")
-    torch.save(state, filename)
+    torch.save(state, os.path.join(root, f"{dt.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')}.pth.tar"))
 
 def load_checkpoint(checkpoint, model):
     """
@@ -22,6 +34,11 @@ def load_checkpoint(checkpoint, model):
     except FileNotFoundError as e:
         print(f"{e}: Model not found.")
         
+def getLatestModel(root):
+    files = os.listdir(root)
+    files.sort(reverse=True)
+    return files[0]
+
 def get_transforms():
     train_transform = A.Compose([
         A.Rotate(limit=35, p=1.0), A.HorizontalFlip(p=0.5), A.VerticalFlip(p=0.1),
@@ -38,6 +55,23 @@ def get_transforms():
 def get_loaders(train_dir, train_maskdir, val_dir,
             val_maskdir, batch_size, train_transform,
             val_transform, num_workers, pin_memory=True):
+
+    """
+        ### Input ###
+        train_dir       : directory with training Xray images
+        train_maskdir   : directory with training BSE Xray images
+        val_dir         : directory with validation Xray images
+        val_maskdir     : directory with validation BSE Xray images
+        batch_size      : batch_size (4,8,16,32)
+        train_transform : transforms for data augmentation for training data
+        val_transform   : transforms for data augmentation for validation data
+        num_workers     : processor cores for data loading
+        pin_memory      : This lets your DataLoader allocate the samples in page-locked memory, which speeds-up the transfer.
+
+        ### Returns ###
+        train_loader    : Training dataloader
+        val_loader      : Validation dataloader
+    """
 
     train_ds = LungSegmentationDataset(Xray_dir=train_dir, mask_dir=train_maskdir, 
                 transform=train_transform)
@@ -70,11 +104,11 @@ def check_accuracy(loader, model, device="cuda"):
             num_pixels += torch.numel(preds)
             # dice_score += (2 * (preds * y).sum()) / ((preds + y).sum() + 1e-5)
 
-    print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
+    # print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
     # print(f"Dice score: {dice_score/len(loader)}")
     model.train()
 
-def save_predictions_as_imgs(epoch, loader, model, folder="saved_images/", device="cpu"):
+def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/LS/saved_images/", device="cpu"):
     model.eval()
     for idx, (x, y) in enumerate(loader):
         y = y[:,:,:,0]

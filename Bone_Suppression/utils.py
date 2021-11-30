@@ -6,16 +6,16 @@ import datetime as dt
 import torchvision
 import numpy as np
 import torch
-# import glob
 import os
 
 # Index:
 # 1) save_checkpoint
 # 2) load_checkpoint
-# 3) get_transforms
-# 4) get_loaders
-# 5) check_accuracy
-# 6) save_predictions_as_imgs
+# 3) getLatestModel
+# 4) get_transforms
+# 5) get_loaders
+# 6) check_accuracy
+# 7) save_predictions_as_imgs
 
 def save_checkpoint(state, root="../../OP/BS/runs/"):
     """
@@ -76,7 +76,8 @@ def get_loaders( train_dir, train_maskdir, val_dir, val_maskdir, batch_size,
     train_ds = BoneSuppressionDataset(Xray_dir=train_dir, mask_dir=train_maskdir,
                 transform=train_transform)
 
-    train_loader = DataLoader(train_ds, batch_size=batch_size, num_workers=num_workers,pin_memory=pin_memory,shuffle=True)
+    train_loader = DataLoader(train_ds, batch_size=batch_size, num_workers=num_workers,
+                pin_memory=pin_memory,shuffle=True)
 
     val_ds = BoneSuppressionDataset(Xray_dir=val_dir, mask_dir=val_maskdir,
                 transform=val_transform)
@@ -118,10 +119,7 @@ def check_accuracy(loader, model, device="cuda"):
     # print(f"MSE score: {mse_score/len(loader)}")
     model.train()
 
-def save_predictions_as_imgs(epoch, loader, model, folder="saved_images/", device="cuda"):
-    """
-        This function terrifies me.
-    """
+def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/BS/saved_images/", device="cuda"):
     model.eval()
     for idx, (x, y) in enumerate(loader):
         y = y[:,:,:,0]

@@ -1,9 +1,13 @@
+from configparser import ConfigParser
 from torch.utils.data import Dataset
 from PIL import Image
 import pandas as pd
 import numpy as np
 import torch
 import os
+
+parser = ConfigParser()
+parser.read("../Other/ConfigParser/config.ini")
 
 class CovidDataset(Dataset):
     """
