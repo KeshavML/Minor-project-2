@@ -87,39 +87,43 @@ def get_loaders(train_dir, train_maskdir, val_dir,
 
     return train_loader, val_loader
 
-def check_accuracy(loader, model, device="cuda"):
-    num_correct = 0
-    num_pixels = 0
-    # dice_score = 0
-    model.eval()
+# def check_accuracy(loader, model, device="cuda"):
+#     num_correct = 0
+#     num_pixels = 0
+#     # dice_score = 0
+#     model.eval()
 
-    with torch.no_grad():
-        for x, y in loader:
-            x = x.to(device)
-            y = y[:,:,:,0]
-            y = y.to(device).unsqueeze(1)
-            preds = torch.sigmoid(model(x))
-            preds = (preds > 0.5).float()
-            num_correct += (preds == y).sum()
-            num_pixels += torch.numel(preds)
+#     with torch.no_grad():
+#         for x, y in loader:
+#             x = x.to(device)
+#             y = y[:,:,:,0]
+#             y = y.to(device).unsqueeze(1)
+#             preds = torch.sigmoid(model(x))
+#             preds = (preds > 0.5).float()
+#             num_correct += (preds == y).sum()
+#             num_pixels += torch.numel(preds)
             # dice_score += (2 * (preds * y).sum()) / ((preds + y).sum() + 1e-5)
 
-    # print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
+        # print(num_correct) 
+        # print(num_pixels)
+        # print(f"Got {num_correct}/{num_pixels} with acc {(num_correct/num_pixels)*100:.3f}%")
     # print(f"Dice score: {dice_score/len(loader)}")
-    model.train()
+    # model.train()
 
 def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/LS/saved_images/", device="cpu"):
     model.eval()
     for idx, (x, y) in enumerate(loader):
+        print(y.shape)
         y = y[:,:,:,0]
+        # y[y == 1] = 255
         x = x.to(device=device)
         with torch.no_grad():
             preds = torch.sigmoid(model(x))
-            preds = (preds > 0.5).float()
+            # preds = (preds > 0.5).float()
 
-        # predicted?
+        # predicted
         torchvision.utils.save_image(preds, f"{folder}/{epoch}_pred_{idx}.png")
-        # GT?
+        # GT
         torchvision.utils.save_image(y.unsqueeze(1), f"{folder}/{epoch}_{idx}.png")
 
     model.train()

@@ -45,7 +45,7 @@ class LungSegmentationDataset(Dataset):
 		xray = np.expand_dims(xray,-1)
 		mask = np.array(Image.open(mask_path).resize((IMGAE_HEIGHT, IMAGE_WIDTH)), dtype=np.float32) # 0-255.0
 		mask = np.expand_dims(mask,-1)
-		mask[mask == 255.0] = 1.0
+		# mask[mask >= 10.0] = 1.0
 
 		if self.test:
 			return xray, mask
@@ -65,7 +65,12 @@ def main():
 	print("Shape of original Xray : ",dataset[0][0].shape)
 	print("Shape of Mask : ",dataset[0][1].shape)
 	print("="*50)
-	print("Xray data: ",type(dataset[0][1][0,0,:]))
+	print("Xray data: ",type(dataset[0][1]))
+	print("="*50)
+	# from matplotlib import pyplot as plt
+	# plt.imshow(dataset[0][1], interpolation='nearest')
+	# plt.imshow(dataset[0][0], interpolation='nearest')
+	# plt.show()
 	assert dataset[0][0].shape == dataset[0][1].shape, "Data-Target shapes not equal."
 
 if __name__=="__main__":

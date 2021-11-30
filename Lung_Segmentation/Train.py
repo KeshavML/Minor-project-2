@@ -68,7 +68,7 @@ def main():
         except Exception as e:
             print(f"{e}: Model not found. Training from scratch.")
 
-    check_accuracy(val_loader, model, device=DEVICE)
+    # check_accuracy(val_loader, model, device=DEVICE)
 
     scaler = torch.cuda.amp.GradScaler()
     
@@ -82,7 +82,7 @@ def main():
         if epoch % 5 == 0:
             save_checkpoint(checkpoint)
             # check accuracy
-            check_accuracy(val_loader, model, device=DEVICE)
+            # check_accuracy(val_loader, model, device=DEVICE)
             # print some examples to a folder
             save_predictions_as_imgs(epoch, val_loader, model, 
                     folder=f"{SAVE_IMAGES}", device=DEVICE)
