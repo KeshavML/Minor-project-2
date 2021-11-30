@@ -39,14 +39,14 @@ def getModel():
         name = ''
         if model_name == '1':
             name = 'inception'
-            aux_logits = input("\nAuxilliary inputs?(Boolean)\n")
-            print()
-            if aux_logits:
-                aux_logits = True
-            else:
-                aux_logits = False
+            # aux_logits = input("\nAuxilliary inputs?(Binary: 0/1)\n")
+            # print()
+            # if int(aux_logits) == 1:
+            #     aux_logits = True
+            # elif int(aux_logits) == 0:
+            #     aux_logits = False
             from Inception import Inception
-            model = Inception(aux_logits=aux_logits, num_classes=9)
+            model = Inception(aux_logits=False, num_classes=9)
         elif model_name == '2':
             name = 'resnet34'
             from ResNet34 import ResNet34

@@ -34,7 +34,12 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # forward
         with torch.cuda.amp.autocast():
             predictions = model(data)
+            print(len(predictions))
+            break
+            # if isinstance(predictions, tuple):
+            #     predictions = (predictions)
             targets = targets[:,0]
+            print("Error: ",type(predictions))
             loss = loss_fn(predictions, targets)
 
         # backward

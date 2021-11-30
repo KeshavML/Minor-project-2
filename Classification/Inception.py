@@ -23,7 +23,7 @@ class Inception(nn.Module):
             x : shape : [batch_size x num_classes]
     """
 
-    def __init__(self, aux_logits=True, num_classes=9):
+    def __init__(self, aux_logits=False, num_classes=9):
         super(Inception, self).__init__()
         assert aux_logits == True or aux_logits == False
         self.aux_logits = aux_logits
@@ -243,9 +243,9 @@ if __name__ == "__main__":
     # N = 3 (Mini batch size)
     x = torch.randn(3, 1, 512, 512)
     # output = aux1, aux2, x if aux_logits == True else x
-    model = Inception(aux_logits=False, num_classes=9)
-    # print(model(x).shape)
-    summary(model, (1, 512, 512))
+    model = Inception(aux_logits=True, num_classes=9)
+    print(type(model(x)))
+    # summary(model, (1, 512, 512))
     # print(model)
 
     # ## Save model's structure

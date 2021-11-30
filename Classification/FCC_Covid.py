@@ -16,8 +16,6 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # batch_size = 32
 # num_epochs = 1
 
-
-
 def main():
     print("Pretrained model : ")
     print("Options: \n1) Inception\n2) ResNet\n3)SqueezeNet\n4) EfficientNet")
