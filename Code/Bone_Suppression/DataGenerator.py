@@ -42,9 +42,9 @@ class BoneSuppressionDataset(Dataset):
 		"""
 		xray_path = os.path.join(self.Xray_dir, self.Xrays[index])
 		mask_path = os.path.join(self.mask_dir, self.Xrays[index])
-		xray = np.array(Image.open(xray_path).resize((IMGAE_HEIGHT, IMAGE_WIDTH)), dtype=np.float32)
+		xray = np.asarray(Image.open(xray_path), dtype=np.float32)
 		xray = np.expand_dims(xray,-1)
-		mask = np.array(Image.open(mask_path).resize((IMGAE_HEIGHT, IMAGE_WIDTH)), dtype=np.float32) # 0-255.0
+		mask = np.asarray(Image.open(mask_path), dtype=np.float32) # 0-255.0
 		mask = np.expand_dims(mask,-1)
 		if self.test:
 			return xray, mask
