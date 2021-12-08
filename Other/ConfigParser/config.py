@@ -6,6 +6,7 @@ config = ConfigParser(interpolation=ExtendedInterpolation())
 
 config['BS'] = {
     'LEARNING_RATE':'1e-4',
+    'SAVE_LOSS':'../../OP/BS/loss.txt',
     'BATCH_SIZE':'2',
     'NUM_EPOCHS':'3',
     'NUM_WORKERS':'4',
@@ -23,6 +24,7 @@ config['BS'] = {
 
 config['LS'] = {
     'LEARNING_RATE':'1e-4',
+    'SAVE_LOSS':'../../OP/LS/loss.txt',
     'BATCH_SIZE':'2',
     'NUM_EPOCHS':'3',
     'NUM_WORKERS':'4',
@@ -47,6 +49,7 @@ config['CL'] = {
     'IMAGE_WIDTH':'512',
     'LOAD_MODEL':'True',
     # Pathology
+    'SAVE_LOSS_PATH':'../../OP/CL/pathology/runs/',
     'LOAD_MODEL_PATH_PATHOLOGY':'../../OP/CL/pathology/runs/',
     'SAVE_MODEL_PATH_PATHOLOGY':'../../OP/CL/pathology/runs/',
     'SAVE_IMAGES_PATHOLOGY':'../../OP/CL/pathology/saved_images/',
@@ -55,6 +58,7 @@ config['CL'] = {
     'VAL_IMG_DIR_PATHOLOGY':'../../Data/CL/pathology/val/xrays/',
     'VAL_CSV_PATHOLOGY':'../../Data/CL/pathology/val/val_pathology.csv',
     # Covid
+    'SAVE_LOSS_COVID':'../../OP/CL/covid/runs/',
     'LOAD_MODEL_PATH_COVID':'../../OP/CL/covid/runs/',
     'SAVE_MODEL_PATH_COVID':'../../OP/CL/covid/runs/',
     'SAVE_IMAGES_COVID':'../../OP/CL/covid/saved_images/',
