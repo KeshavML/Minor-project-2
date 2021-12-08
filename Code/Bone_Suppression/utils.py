@@ -37,7 +37,10 @@ def load_checkpoint(checkpoint, model):
 def getLatestModel(root):
     files = os.listdir(root)
     files.sort(reverse=True)
-    return files[0]
+    try:
+        return files[0]
+    except IndexError:
+        print("Model not found. Creating new one.")
 
 def get_transforms():
     """
@@ -87,6 +90,15 @@ def get_loaders(train_dir, train_maskdir, val_dir, val_maskdir, batch_size,
 
     return train_loader, val_loader
 
+def write_loss(loss_val, filepath='../../OP/BS/loss.txt'):
+    print("*"*50)
+    loss_val = str(round(loss_val.item(),4))
+    print(f"Loss val : {loss_val}")
+    data = f"{dt.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')},{loss_val}"
+    with open(filepath,'a') as f:
+        f.write(data)
+    print("*"*50)
+
 # def check_loss(loader, model, device="cuda"):
 #     """
 #         This function provides an evaluation score.
@@ -107,18 +119,18 @@ def get_loaders(train_dir, train_maskdir, val_dir, val_maskdir, batch_size,
 #     # To turn off batchnorm, dropouts.
 #     model.eval()
 
-    # To turn off gradient calculation.
-    with torch.no_grad():
-        for x, y in loader:
-            x = x.to(device)
-            y = y[:,:,:,0]
-            y = y.to(device).unsqueeze(1)
-            preds = model(x)
-            mse_score += np.square(np.subtract(y,preds)).mean()
+#     # To turn off gradient calculation.
+#     with torch.no_grad():
+#         for x, y in loader:
+#             x = x.to(device)
+#             y = y[:,:,:,0]
+#             y = y.to(device).unsqueeze(1)
+#             preds = model(x)
+#             mse_score += np.square(np.subtract(y,preds)).mean()
 
-    # print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
-    # print(f"MSE score: {mse_score/len(loader)}")
-    model.train()
+#     # print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
+#     # print(f"MSE score: {mse_score/len(loader)}")
+#     model.train()
 
 def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/BS/saved_images/", device="cuda"):
     model.eval()

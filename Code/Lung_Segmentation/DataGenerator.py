@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 parser = ConfigParser()
-parser.read("../Other/ConfigParser/config.ini")
+parser.read("../../Other/ConfigParser/config.ini")
 IMGAE_HEIGHT, IMAGE_WIDTH = int(parser.get('BS','image_height')),int(parser.get('BS','image_width'))
 
 class LungSegmentationDataset(Dataset):

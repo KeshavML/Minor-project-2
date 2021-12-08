@@ -14,6 +14,7 @@ parser.read("../../Other/ConfigParser/config.ini")
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 PIN_MEMORY = True if torch.cuda.is_available() else False
 LOAD_MODEL = parser.get('BS','load_model')
+SAVE_LOSS = parser.get('BS', 'save_loss')
 
 LEARNING_RATE = float(parser.get('BS','learning_rate'))
 BATCH_SIZE = int(parser.get('BS','batch_size'))
@@ -44,6 +45,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
             predictions = model(data)
             targets = targets[:,:,:,:,0]
             loss = loss_fn(predictions, targets)
+            write_loss(loss,filepath=SAVE_LOSS)
 
         # backward
         optimizer.zero_grad()

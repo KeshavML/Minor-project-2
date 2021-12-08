@@ -59,6 +59,7 @@ def getModel():
             print("\nInvalid input, try again:\n")
         if 'model' in locals():
             break
+        # model -> model, name -> str
     return model, name
 
 def get_transforms(IMAGE_HEIGHT, IMAGE_WIDTH):
@@ -108,6 +109,16 @@ def get_loaders_covid_dataset(
                 pin_memory=pin_memory, shuffle=False)
 
     return train_loader, val_loader
+
+def write_loss(loss_val, filepath='../../OP/CL/pathology/runs/inception/loss.txt'):
+    print("*"*50)
+    loss_val = str(round(loss_val.item(),4))
+    print(f"Loss val : {loss_val}")
+    data = f"{dt.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')},{loss_val}"
+    with open(filepath,'a') as f:
+        f.write(data)
+    print("*"*50)
+
 
 # def check_loss(loader, model, device="cuda"):
 #     num_correct = 0

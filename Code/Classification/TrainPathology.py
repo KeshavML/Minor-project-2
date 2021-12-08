@@ -7,7 +7,7 @@ import torch
 import gc
 
 parser = ConfigParser()
-parser.read("../Other/ConfigParser/config.ini")
+parser.read("../../Other/ConfigParser/config.ini")
 
 # Parameters
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -25,7 +25,7 @@ TRAIN_CSV_DIR = parser.get('CL','train_csv_pathology')
 VAL_IMG_DIR = parser.get('CL','val_img_dir_pathology')
 VAL_CSV_DIR = parser.get('CL','val_csv_pathology')
 
-def train_fn(loader, model, optimizer, loss_fn, scaler):
+def train_fn(loader, model, optimizer, loss_fn, scaler, SAVE_LOSS):
     loop = tqdm(loader)
     for batch_idx, (data,targets) in enumerate(loop):
         data = data['image'].to(device=DEVICE)
@@ -36,7 +36,8 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
             predictions = model(data)
             targets = targets[:,0]
             loss = loss_fn(predictions, targets)
-
+            write_loss(loss,filepath=SAVE_LOSS)
+            
         # backward
         optimizer.zero_grad()
         scaler.scale(loss).backward()
@@ -55,10 +56,12 @@ def main():
     LOAD_MODEL_PATH = parser.get('CL','load_model_path_pathology')
     SAVE_MODEL_PATH = parser.get('CL','load_model_path_pathology')
     SAVE_IMAGES = parser.get('CL','save_images_pathology')+"train/"
-
+    SAVE_LOSS = parser.get('CL', 'save_loss_path')
+    
     SAVE_IMAGES = SAVE_IMAGES + f"{name}/"
     SAVE_MODEL_PATH = SAVE_MODEL_PATH + f"{name}/"
     LOAD_MODEL_PATH = LOAD_MODEL_PATH+f"{name}/"
+    SAVE_LOSS = SAVE_LOSS + f"{name}/loss.txt"
 
 
     train_loader, val_loader = get_loaders_multiclass_pathology_dataset(
@@ -77,7 +80,7 @@ def main():
     scaler = torch.cuda.amp.GradScaler()
     
     for epoch in range(NUM_EPOCHS):
-        train_fn(train_loader, model, optimizer, loss_fn, scaler)
+        train_fn(train_loader, model, optimizer, loss_fn, scaler, SAVE_LOSS)
         # save model
         checkpoint = {
             "state_dict" : model.state_dict(),

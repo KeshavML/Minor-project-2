@@ -7,7 +7,7 @@ import torch
 import os
 
 parser = ConfigParser()
-parser.read("../Other/ConfigParser/config.ini")
+parser.read("../../Other/ConfigParser/config.ini")
 IMGAE_HEIGHT, IMAGE_WIDTH = int(parser.get('CL','image_height')),int(parser.get('CL','image_width'))
 
 class CovidDataset(Dataset):
@@ -24,7 +24,7 @@ class CovidDataset(Dataset):
         self.dataframe = pd.read_csv(csv_file)
         self.img_dir = img_dir
         self.transform = transform
-        self.file_names = self.dataframe.file_name.values.tolist()
+        self.file_names = self.dataframe.values.tolist()
         self.labels = self.dataframe.labels.values.tolist()
         
     def __len__(self):
@@ -63,8 +63,9 @@ class MultiClassPathologyDataset(Dataset):
         self.dataframe = pd.read_csv(csv_file)
         self.img_dir = img_dir
         self.transform = transform
-        self.file_names = self.dataframe.file_name.values.tolist()
-        self.labels = self.dataframe.labels.values.tolist()
+        self.file_names = self.dataframe.values.tolist()
+        print(f"Line 67 Columns: {self.dataframe.columns}")
+        self.labels = self.dataframe['Finding Labels'].values.tolist()
         self.labels = [each.split(",") for each in self.labels]
 
         for each in self.labels:
@@ -85,7 +86,10 @@ class MultiClassPathologyDataset(Dataset):
             ### Returns ###
             image, label array : (512x512, [1x1]) at that index.
         """
-        img_path = os.path.join(self.img_dir, self.file_names[index])
+        # print("-"*10)
+        # print(f"{self.img_dir}{self.file_names[index][0]}")
+        # print("-"*10)
+        img_path = os.path.join(self.img_dir, self.file_names[index][0])
         image = Image.open(img_path)#.resize((IMGAE_HEIGHT,IMAGE_WIDTH))
         image = np.expand_dims(np.array(image),-1)
         label = self.labels[index]

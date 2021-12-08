@@ -87,6 +87,15 @@ def get_loaders(train_dir, train_maskdir, val_dir,
 
     return train_loader, val_loader
 
+def write_loss(loss_val, filepath='../../OP/LS/runs/loss.txt'):
+    print("*"*50)
+    loss_val = str(round(loss_val.item(),4))
+    print(f"Loss val : {loss_val}")
+    data = f"{dt.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')},{loss_val}"
+    with open(filepath,'a') as f:
+        f.write(data)
+    print("*"*50)
+
 # def check_loss(loader, model, device="cuda"):
 #     num_correct = 0
 #     num_pixels = 0
