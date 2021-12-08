@@ -55,7 +55,7 @@ def get_transforms():
     
     return train_transform, val_transform
 
-def get_loaders( train_dir, train_maskdir, val_dir, val_maskdir, batch_size, 
+def get_loaders(train_dir, train_maskdir, val_dir, val_maskdir, batch_size, 
             train_transform, val_transform, num_workers=4, pin_memory=True):
     """
         ### Input ###
@@ -87,24 +87,25 @@ def get_loaders( train_dir, train_maskdir, val_dir, val_maskdir, batch_size,
 
     return train_loader, val_loader
 
-def check_accuracy(loader, model, device="cuda"):
-    """
-        This function provides an evaluation score.
+# def check_loss(loader, model, device="cuda"):
+#     """
+#         This function provides an evaluation score.
 
-        ### Input ###
-        loader      : Data loader
-        model       : Bone Suppression model
-        device      : CPU/CUDA (GPU)
+#         ### Input ###
+#         loader      : Data loader
+#         model       : Bone Suppression model
+#         device      : CPU/CUDA (GPU)
 
-        ### Returns ###
+#         ### Returns ###
 
-    """
-    num_correct = 0
-    num_pixels = 0
-    mse_score = 0
+#     """
+#     num_correct = 0
+#     num_pixels = 0
+#     mse_score = 0
+#     print("This is running")
     
-    # To turn off batchnorm, dropouts.
-    model.eval()
+#     # To turn off batchnorm, dropouts.
+#     model.eval()
 
     # To turn off gradient calculation.
     with torch.no_grad():

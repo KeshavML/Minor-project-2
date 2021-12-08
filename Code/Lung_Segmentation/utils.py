@@ -87,10 +87,10 @@ def get_loaders(train_dir, train_maskdir, val_dir,
 
     return train_loader, val_loader
 
-# def check_accuracy(loader, model, device="cuda"):
+# def check_loss(loader, model, device="cuda"):
 #     num_correct = 0
 #     num_pixels = 0
-#     # dice_score = 0
+#     dice_score = 0
 #     model.eval()
 
 #     with torch.no_grad():
@@ -102,13 +102,13 @@ def get_loaders(train_dir, train_maskdir, val_dir,
 #             preds = (preds > 0.5).float()
 #             num_correct += (preds == y).sum()
 #             num_pixels += torch.numel(preds)
-            # dice_score += (2 * (preds * y).sum()) / ((preds + y).sum() + 1e-5)
+#             dice_score += (2 * (preds * y).sum()) / ((preds + y).sum() + 1e-5)
 
-        # print(num_correct) 
-        # print(num_pixels)
-        # print(f"Got {num_correct}/{num_pixels} with acc {(num_correct/num_pixels)*100:.3f}%")
-    # print(f"Dice score: {dice_score/len(loader)}")
-    # model.train()
+#         print(num_correct) 
+#         print(num_pixels)
+#         print(f"Got {num_correct}/{num_pixels} with acc {(num_correct/num_pixels)*100:.3f}%")
+#     print(f"Dice score: {dice_score/len(loader)}")
+#     model.train()
 
 def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/LS/saved_images/", device="cpu"):
     model.eval()

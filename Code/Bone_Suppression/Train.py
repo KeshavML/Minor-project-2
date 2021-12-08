@@ -8,7 +8,7 @@ import torch
 import gc
 
 parser = ConfigParser()
-parser.read("../Other/ConfigParser/config.ini")
+parser.read("../../Other/ConfigParser/config.ini")
 
 # Parameters
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -58,7 +58,7 @@ def main():
     train_transform, val_transform = get_transforms()
     model = BoneSuppression(in_channels=1, out_channels=1).to(DEVICE)
     # Change the loss function
-    loss_fn = nn.BCEWithLogitsLoss()
+    loss_fn = nn.MSELoss(reduction='mean')
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
     train_loader, val_loader = get_loaders(
@@ -72,7 +72,7 @@ def main():
         except FileNotFoundError as e:
             print(f"Error {e}: Model not found!")
 
-    check_accuracy(val_loader, model, device=DEVICE)
+    # check_loss(val_loader, model, device=DEVICE)
     
     scaler = torch.cuda.amp.GradScaler()
 
@@ -86,7 +86,7 @@ def main():
         if epoch % 5 == 0:
             save_checkpoint(checkpoint,root=f"{SAVE_MODEL_PATH}")
             # check accuracy
-            check_accuracy(val_loader, model, device=DEVICE)
+            # check_loss(val_loader, model, device=DEVICE)
             # print some examples to a folder
             save_predictions_as_imgs(epoch, val_loader, model, 
                     folder=f"{SAVE_IMAGES}", device=DEVICE)

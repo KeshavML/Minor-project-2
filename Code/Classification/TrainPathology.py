@@ -72,7 +72,7 @@ def main():
         except Exception as e:
             print(f"{e}: Model couldn't be loaded.")
 
-    # check_accuracy(val_loader, model, device=DEVICE)
+    # check_loss(val_loader, model, device=DEVICE)
 
     scaler = torch.cuda.amp.GradScaler()
     
@@ -85,7 +85,7 @@ def main():
         }
         if epoch % 5 == 0:
             save_checkpoint(checkpoint, root=SAVE_MODEL_PATH)
-            check_accuracy(val_loader, model, device=DEVICE)
+            # check_loss(val_loader, model, device=DEVICE)
             # print some examples to a folder
             save_predictions_as_imgs(epoch, val_loader, model, 
                     folder=SAVE_IMAGES, device=DEVICE)
