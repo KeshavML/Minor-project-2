@@ -117,6 +117,7 @@ def write_loss(loss_val, filepath='../../OP/CL/pathology/runs/inception/loss.txt
     data = f"{dt.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')},{loss_val}"
     with open(filepath,'a') as f:
         f.write(data)
+        f.write("\n")
     print("*"*50)
 
 

@@ -42,8 +42,8 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
             predictions = model(data)
             targets = targets[:,:,:,:,0]
             loss = loss_fn(predictions, targets)
-            write_loss(loss,filepath=SAVE_LOSS)
-
+        
+        write_loss(loss,filepath=SAVE_LOSS)
         # backward
         optimizer.zero_grad()
         scaler.scale(loss).backward()
