@@ -138,16 +138,22 @@ def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/BS/saved_ima
     model.eval()
     for idx, (x, y) in enumerate(loader):
         y = y[:,:,:,0]
-        print(y)
-        print(y.shape)
-        Image.fromarray(y.numpy()).show()
+        # Image
+        # print(y)
+        # print(y.dtype)
+        y = np.int16(y[0,:,:].numpy())
+        y = torch.tensor(y).float()
         x = x.to(device=device)
         with torch.no_grad():
             preds = model(x)
-        Image.fromarray(preds).show()
-        # what image is this? Predicted?
+        preds = np.int16(preds.numpy()[0,0,:,:]*255)
+        # print(preds)
+        # print(preds.dtype)
+        preds = torch.tensor(preds).float()
+        print(preds)
+        print(y)
         torchvision.utils.save_image(preds, f"{folder}/{epoch}_pred_{idx}.png")
         # and what image is this mate? GT?
-        torchvision.utils.save_image(y.unsqueeze(1), f"{folder}/{epoch}_{idx}.png")
+        torchvision.utils.save_image(y, f"{folder}/{epoch}_{idx}.png")
 
     model.train()
