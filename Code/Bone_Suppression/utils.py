@@ -1,6 +1,7 @@
 from DataGenerator import BoneSuppressionDataset
 from albumentations.pytorch import ToTensorV2
 from torch.utils.data import DataLoader
+from PIL import Image
 import albumentations as A
 import datetime as dt
 import torchvision
@@ -137,9 +138,13 @@ def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/BS/saved_ima
     model.eval()
     for idx, (x, y) in enumerate(loader):
         y = y[:,:,:,0]
+        print(y)
+        print(y.shape)
+        Image.fromarray(y.numpy()).show()
         x = x.to(device=device)
         with torch.no_grad():
             preds = model(x)
+        Image.fromarray(preds).show()
         # what image is this? Predicted?
         torchvision.utils.save_image(preds, f"{folder}/{epoch}_pred_{idx}.png")
         # and what image is this mate? GT?
