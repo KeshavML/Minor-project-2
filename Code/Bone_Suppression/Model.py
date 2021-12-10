@@ -36,7 +36,7 @@ class BoneSuppression(nn.Module):
             nn.LeakyReLU(True),
             nn.ConvTranspose2d(16, out_channels, 3, stride=2, padding=1),  # b, 1, 1024, 1024
             # output activation function
-            nn.Tanh()
+            nn.LeakyReLU()
         )    
 
     def forward(self, x):
@@ -55,11 +55,11 @@ def test():
     model = BoneSuppression(in_channels=1,out_channels=1)
     # preds = model(x)
     
-    summary(model, (1, 512, 512))
+    # summary(model, (1, 512, 512))
     ## Save model's structure
     # torch.save(model.state_dict(), './runs/Bone Suppression/Bone Suppression.pth')
 
-    # print(preds.shape)
+    print(preds)
     # print(x.shape)
     # assert preds.shape == x.shape, "input-output shapes do not match."
 

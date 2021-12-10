@@ -139,22 +139,21 @@ def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/BS/saved_ima
     for idx, (x, y) in enumerate(loader):
         y = y[:,:,:,0]
         # Image
-        # print(y)
-        # print(y.dtype)
         y = np.int16(y[0,:,:].numpy())
-        y = torch.tensor(y).float()
+        # print("y",y.max(),y.min())
+        y = Image.fromarray(y).convert("L")
+        # print("gt",np.array(y).max(),np.array(y).min())
+        # y.show()
+        y.save(f"{folder}/{epoch}_{idx}.png")
+
         x = x.to(device=device)
         with torch.no_grad():
             preds = model(x)
+        print("preds",preds.max(),preds.min())
         preds = np.int16(preds.numpy()[0,0,:,:]*255)
-        # print(preds)
-        # print(preds.dtype)
-        print(preds.max(),preds.min())
-        preds = torch.tensor(preds).float()
-        print(preds)
-        print(y)
-        torchvision.utils.save_image(preds, f"{folder}/{epoch}_pred_{idx}.png")
-        # and what image is this mate? GT?
-        torchvision.utils.save_image(y, f"{folder}/{epoch}_{idx}.png")
+        preds = Image.fromarray(preds).convert("L")
+        # print('preds2',np.absolute(np.array(preds)).max(),np.absolute(np.array(preds)).min())
+        preds.save(f"{folder}/{epoch}_pred_{idx}.png")
+        preds.show()
 
     model.train()
