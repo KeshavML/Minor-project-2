@@ -149,6 +149,7 @@ def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/BS/saved_ima
         preds = np.int16(preds.numpy()[0,0,:,:]*255)
         # print(preds)
         # print(preds.dtype)
+        print(preds.max(),preds.min())
         preds = torch.tensor(preds).float()
         print(preds)
         print(y)

@@ -123,7 +123,7 @@ def write_loss(loss_val, filepath='../../OP/LS/runs/loss.txt'):
 def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/LS/saved_images/", device="cpu"):
     model.eval()
     for idx, (x, y) in enumerate(loader):
-        print(y.shape)
+        # print(y.shape)
         y = y[:,:,:,0]
         # y[y == 1] = 255
         x = x.to(device=device)
