@@ -137,7 +137,7 @@ def write_loss(loss_val, filepath='../../OP/BS/loss.txt'):
 def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/BS/saved_images/", device="cuda"):
     model.eval()
     for idx, (x, y) in enumerate(loader):
-        y = y[:,:,:,0]
+        y = y[:,:,:,0].cpu()
         # Image
         y = np.int16(y[0,:,:].numpy())
         # print("y",y.max(),y.min())
@@ -150,7 +150,7 @@ def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/BS/saved_ima
         with torch.no_grad():
             preds = model(x)
         print("preds",preds.max(),preds.min())
-        preds = np.int16(preds.numpy()[0,0,:,:]*255)
+        preds = np.int16(preds.cpu().numpy()[0,0,:,:]*255)
         preds = Image.fromarray(preds).convert("L")
         # print('preds2',np.absolute(np.array(preds)).max(),np.absolute(np.array(preds)).min())
         preds.save(f"{folder}/{epoch}_pred_{idx}.png")

@@ -13,7 +13,7 @@ if not os.path.exists(original_processed_path):
 # works
 def process_image_original(image):
     img = Image.open(os.path.join(path_original,image)).resize((512,512))
-    img = 255 - np.asarray(img)
+    img = np.int16(255 - np.asarray(img))
     img = Image.fromarray(img)
     img.save(f'{original_processed_path}{image}')
 
