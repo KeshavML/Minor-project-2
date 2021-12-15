@@ -144,16 +144,20 @@ def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/BS/saved_ima
         y = Image.fromarray(y).convert("L")
         # print("gt",np.array(y).max(),np.array(y).min())
         # y.show()
-        y.save(f"{folder}/{epoch}_{idx}.png")
+        # y.save(f"{folder}/{epoch}_{idx}.png")
 
         x = x.to(device=device)
+        # print(x)
+        # print(dir(x))
+        # print(type(x))
+        # print(x.shape)
         with torch.no_grad():
             preds = model(x)
-        print("preds",preds.max(),preds.min())
+        # print("preds",preds.max(),preds.min())
         preds = np.int16(preds.cpu().numpy()[0,0,:,:]*255)
         preds = Image.fromarray(preds).convert("L")
         # print('preds2',np.absolute(np.array(preds)).max(),np.absolute(np.array(preds)).min())
         preds.save(f"{folder}/{epoch}_pred_{idx}.png")
-        preds.show()
+        # preds.show()
 
     model.train()

@@ -1,6 +1,7 @@
 from DataGenerator import LungSegmentationDataset
 from albumentations.pytorch import ToTensorV2
 from torch.utils.data import DataLoader
+from PIL import Image
 import albumentations as A
 import datetime as dt
 import torchvision
@@ -124,16 +125,44 @@ def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/LS/saved_ima
     model.eval()
     for idx, (x, y) in enumerate(loader):
         # print(y.shape)
-        y = y[:,:,:,0]
-        # y[y == 1] = 255
+        # print("$"*40)
+        y = y[0,:,:,0]
+        # print('1',y.shape)
+        # print('2',y.max(),y.min())
+        y[y == 1] = 255
+        # print('3',y.shape)
+        # print('4',y.max(),y.min())
         x = x.to(device=device)
+        # print('5',x.shape)
+        # print('6',x.max(),x.min())
+        
         with torch.no_grad():
             preds = torch.sigmoid(model(x))
-            # preds = (preds > 0.5).float()
+        #     # preds = (preds > 0.5).float()
+        # print('7',preds.shape)
+        # print('8',preds.max(),preds.min())
+        # print("$"*40)
 
-        # predicted
-        torchvision.utils.save_image(preds, f"{folder}/{epoch}_pred_{idx}.png")
-        # GT
-        torchvision.utils.save_image(y.unsqueeze(1), f"{folder}/{epoch}_{idx}.png")
+        # # predicted
+        preds = preds.cpu().numpy()[0,0,:,:]
+        preds[preds<0.5] = 0.0
+        preds[preds>=0.5] = 1.0
+        preds = np.int16(preds*255)
+        preds = Image.fromarray(preds).convert('L')
+        # preds.show()
+        # preds.save(f"{folder}/{epoch}_pred_{idx}.png")
+
+        # # GT
+        y = y.cpu().numpy()
+        print('unique:',np.unique(y))
+        # print('sdfas',y.max())
+        y = np.int16(y)
+        # print(y.shape)
+        # print('unique:',np.unique(y))
+        # print(y.max())
+        y = Image.fromarray(y).convert('L')
+        # y.show()
+        y.save(f"{folder}/{epoch}_{idx}.png")
+        # torchvision.utils.save_image(y[0,:,:], f"{folder}/{epoch}_{idx}.png")
 
     model.train()

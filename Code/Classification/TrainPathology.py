@@ -55,14 +55,13 @@ def main():
 
     LOAD_MODEL_PATH = parser.get('CL','load_model_path_pathology')
     SAVE_MODEL_PATH = parser.get('CL','load_model_path_pathology')
-    SAVE_IMAGES = parser.get('CL','save_images_pathology')+"train/"
+    SAVE_CSV = parser.get('CL','save_images_pathology')+"train/"
     SAVE_LOSS = parser.get('CL', 'save_loss_path')
     
-    SAVE_IMAGES = SAVE_IMAGES + f"{name}/"
+    SAVE_CSV = SAVE_CSV + f"{name}/"
     SAVE_MODEL_PATH = SAVE_MODEL_PATH + f"{name}/"
     LOAD_MODEL_PATH = LOAD_MODEL_PATH+f"{name}/"
     SAVE_LOSS = SAVE_LOSS + f"{name}/loss.txt"
-
 
     train_loader, val_loader = get_loaders_multiclass_pathology_dataset(
         csv_train=TRAIN_CSV_DIR, img_dir_train=TRAIN_IMG_DIR, csv_val=VAL_CSV_DIR, img_dir_val=VAL_IMG_DIR,
@@ -90,8 +89,8 @@ def main():
             save_checkpoint(checkpoint, root=SAVE_MODEL_PATH)
             # check_loss(val_loader, model, device=DEVICE)
             # print some examples to a folder
-            save_predictions_as_imgs(epoch, val_loader, model, 
-                    folder=SAVE_IMAGES, device=DEVICE)
+            save_predictions_as_csv(epoch, val_loader, model, 
+                    folder=SAVE_CSV, device=DEVICE)
         gc.collect()
 
 if __name__ == "__main__":

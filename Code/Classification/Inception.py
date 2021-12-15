@@ -23,7 +23,7 @@ class Inception(nn.Module):
             x : shape : [batch_size x num_classes]
     """
 
-    def __init__(self, aux_logits=False, num_classes=9):
+    def __init__(self, aux_logits=False,in_channels=1,num_classes=9):
         super(Inception, self).__init__()
         assert aux_logits == True or aux_logits == False
         self.aux_logits = aux_logits
@@ -31,7 +31,7 @@ class Inception(nn.Module):
         # Write in_channels, etc, all explicit in self.conv1, rest will write to
         # make everything as compact as possible, kernel_size=3 instead of (3,3)
         self.conv1 = conv_block(
-            in_channels=1,
+            in_channels=in_channels,
             out_channels=32,
             kernel_size=7,
             stride=2,
@@ -240,11 +240,23 @@ class conv_block(nn.Module):
 
 
 if __name__ == "__main__":
-    # N = 3 (Mini batch size)
-    x = torch.randn(3, 1, 512, 512)
+
     # output = aux1, aux2, x if aux_logits == True else x
-    model = Inception(aux_logits=True, num_classes=9)
-    print(type(model(x)))
+    model1 = Inception(aux_logits=False, in_channels=1, num_classes=9)
+    model2 = Inception(aux_logits=False, in_channels=2, num_classes=9)
+    model3 = Inception(aux_logits=False, in_channels=3, num_classes=9)
+    # N = 3 (Mini batch size)
+    x1 = torch.randn(3, 1, 512, 512)
+    x2 = torch.randn(3, 2, 512, 512)
+    x3 = torch.randn(4, 3, 512, 512)
+    print("Ouput 1: ",type(model1(x1)[0]))
+    print("Ouput 2: ",len(model2(x2)))
+    print("Ouput 3: ",model3(x3)[2].shape)
+    # model2(x2)
+    # print("$"*18)
+    # model3(x3)[2]
+    # print(model3(x3)[1])
+
     # summary(model, (1, 512, 512))
     # print(model)
 

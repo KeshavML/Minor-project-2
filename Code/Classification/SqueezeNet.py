@@ -38,7 +38,7 @@ class fire(nn.Module):
 
 
 class SqueezeNet(nn.Module):
-    def __init__(self, in_channels, num_classes):
+    def __init__(self, in_channels=1, num_classes=9):
         super(SqueezeNet, self).__init__()
         self.conv1 = nn.Conv2d(in_channels, 32, kernel_size=3, stride=1, padding=1, bias=False) # 32
         self.bn1 = nn.BatchNorm2d(32)
@@ -106,7 +106,16 @@ def fire_layer(inp, s, e):
     return f
 
 def squeezenet(pretrained=False):
-    model = SqueezeNet(1, 9)
+    model1 = SqueezeNet(1, 9)
+    model2 = SqueezeNet(2, 9)
+    model3 = SqueezeNet(3, 9)
+    x1 = torch.randn(3, 1, 512, 512)
+    x2 = torch.randn(3, 2, 512, 512)
+    x3 = torch.randn(3, 3, 512, 512)
+    print("Ouput 1: ",model1(x1).shape)
+    print("Ouput 2: ",model2(x2).shape)
+    print("Ouput 3: ",model3(x3).shape)
+
     # inp = Variable(torch.randn(3,1,512,512))
     # out = model.forward(inp)
     # print(out.size())

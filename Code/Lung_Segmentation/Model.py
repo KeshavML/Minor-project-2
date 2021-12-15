@@ -70,12 +70,12 @@ class LungSegmentation(nn.Module):
 
 def test():
     # batch, channel, w,l
-    # x = torch.randn((3, 1, 512, 512))
+    x = torch.randn((3, 1, 512, 512))
     model = LungSegmentation(in_channels=1, out_channels=1)
-    summary(model, (1, 512, 512))
-    # preds = model(x)
-    # print("Mask Prediction shape : ",preds.shape)
-    # print("Original Xray shape : ",x.shape)
+    # summary(model, (1, 512, 512))
+    preds = model(x)
+    print("Mask Prediction shape : ",preds.shape)
+    print("Original Xray shape : ",x.shape)
     # assert preds.shape == x.shape
     ## Save model's structure
     # torch.save(model.state_dict(), './runs/Lung Segmentation/Lung Segmentation.pth')

@@ -53,8 +53,8 @@ def getModel():
             model = ResNet34(img_channel=1, num_classes=9)
         elif model_name == '3':
             name = 'squeezenet'
-            from SqueezeNet import squeezenet
-            model = squeezenet()            
+            from SqueezeNet import SqueezeNet
+            model = SqueezeNet()            
         else:
             print("\nInvalid input, try again:\n")
         if 'model' in locals():
@@ -145,7 +145,7 @@ def write_loss(loss_val, filepath='../../OP/CL/pathology/runs/inception/loss.txt
 #     # print(f"Dice score: {dice_score/len(loader)}")
 #     model.train()
 
-def save_predictions_as_imgs(epoch, loader, model, folder="Saved Images", device="cuda"):
+def save_predictions_as_csv(epoch, loader, model, folder="Saved Images", device="cuda"):
     model.eval()
     for idx, (x, y) in enumerate(loader):
         x = x['image'].to(device=device)

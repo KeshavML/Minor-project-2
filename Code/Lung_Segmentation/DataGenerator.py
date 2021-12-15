@@ -45,7 +45,8 @@ class LungSegmentationDataset(Dataset):
 		xray = np.expand_dims(xray,-1)
 		mask = np.array(Image.open(mask_path), dtype=np.float32) # 0-255.0
 		mask = np.expand_dims(mask,-1)
-		# mask[mask >= 10.0] = 1.0
+		mask[mask < 10.0] = 0.0
+		mask[mask >= 10.0] = 1.0
 
 		if self.test:
 			return xray, mask
