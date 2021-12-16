@@ -28,10 +28,19 @@ def predict(model,image_name):
 
 def savePreds(image_name,pred,rootdir):
     image_name = image_name.split('/')[-1]
-    pred = pred.numpy()
-    with open(f'{rootdir}','a') as f:
-        f.write(f"{image_name,}")
-    pass
+    pred = pred.numpy()[0]
+    # print(pred)
+    mean = pred.mean()*1.4
+    pred = [1 if each > mean else 0 for each in pred]
+    # print(pred)
+    # pred = np.round(pred).astype(np.uint8)
+    pred_labels = ''
+    for each in pred:
+        pred_labels=pred_labels+f',{each}'
+    pred_labels = f'\"{pred_labels[1:]}\"'
+    with open(rootdir,'a') as f:
+        f.write(f"{image_name},{pred_labels}")
+    # pass
 
 if __name__ == "__main__":
     # Parameters
@@ -44,6 +53,8 @@ if __name__ == "__main__":
 
     LOAD_MODEL_PATH = parser.get('CL','load_model_path_pathology')
     SAVE_CSV = parser.get('CL','save_images_pathology')+"train/"
+    
+    ROOTDIR_PATH = parser.get('CL','pred_csv_pathology')+f'/{name}/preds.csv'
 
     SAVE_CSV = SAVE_CSV + f"{name}/"
     LOAD_MODEL_PATH = LOAD_MODEL_PATH+f"{name}/"
@@ -55,10 +66,14 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"{e}: Model couldn't be loaded.")
 
-    img = IMG_DIR+os.listdir(IMG_DIR)[0]
-    pred = predict(model,img)
-
-    print(pred)
+    # img = IMG_DIR+os.listdir(IMG_DIR)[0]
+    with torch.no_grad():
+        images = os.listdir(IMG_DIR)
+        images = [IMG_DIR+each for each in images]
+        for img in images:
+            pred = predict(model,img)
+            savePreds(img,pred,ROOTDIR_PATH)
+            # print(pred)
 # summary(model)
 
 
