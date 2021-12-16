@@ -9,10 +9,20 @@ from utils import getLatestModel,load_checkpoint,getModel
 
 parser = ConfigParser()
 parser.read("../../Other/ConfigParser/config.ini")
+# Normalization params
+MAX_PIXEL_VALUE = 255.0
+MEAN = 0.449
+STD = 0.226
 
 def predict(model,image_name):
-    img = np.array(Image.open(image_name).convert('L'))
+    img = Image.open(image_name).convert('L')
+    img = np.array(img,dtype=np.float32)
+    img = (img - MEAN*MAX_PIXEL_VALUE)/(STD * MAX_PIXEL_VALUE)    
+    # print('shape::',img.shape)
     img = torch.from_numpy(img)
+    img = torch.unsqueeze(img,0)
+    img = torch.unsqueeze(img,0)
+    # print('shape::',img.shape)
     pred = model(img)
     return pred
 
@@ -45,8 +55,10 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"{e}: Model couldn't be loaded.")
 
+    img = IMG_DIR+os.listdir(IMG_DIR)[0]
+    pred = predict(model,img)
 
-
+    print(pred)
 # summary(model)
 
 

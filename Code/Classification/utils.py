@@ -66,12 +66,12 @@ def get_transforms(IMAGE_HEIGHT, IMAGE_WIDTH):
     train_transform = A.Compose([
         A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
         A.Rotate(limit=35, p=1.0), A.HorizontalFlip(p=0.5), A.VerticalFlip(p=0.1),
-        A.Normalize(mean=[0.0], std=[1.0], max_pixel_value=255.0),
+        A.Normalize(mean=[0.449], std=[0.226], max_pixel_value=255.0),
         ToTensorV2()])
 
     val_transform = A.Compose([
         A.Resize(height=IMAGE_HEIGHT, width =IMAGE_WIDTH),
-        A.Normalize(mean=0.0, std=[1.0], max_pixel_value=255.0),
+        A.Normalize(mean=[0.449], std=[0.226], max_pixel_value=255.0),
         ToTensorV2()])
 
     return train_transform, val_transform
@@ -145,19 +145,19 @@ def write_loss(loss_val, filepath='../../OP/CL/pathology/runs/inception/loss.txt
 #     # print(f"Dice score: {dice_score/len(loader)}")
 #     model.train()
 
-def save_predictions_as_csv(epoch, loader, model, folder="Saved Images", device="cuda"):
-    model.eval()
-    for idx, (x, y) in enumerate(loader):
-        x = x['image'].to(device=device)
-        with torch.no_grad():
-            preds = torch.sigmoid(model(x))
-            preds = (preds > 0.5).float()
+# def save_predictions_as_csv(epoch, loader, model, folder="Saved Images", device="cuda"):
+#     model.eval()
+#     for idx, (x, y) in enumerate(loader):
+#         x = x['image'].to(device=device)
+#         with torch.no_grad():
+#             preds = torch.sigmoid(model(x))
+#             preds = (preds > 0.5).float()
 
-        # Predicted
-        predicted_path = f"{folder}{epoch}_pred_{idx}.png"
-        torchvision.utils.save_image(preds, predicted_path)
-        # GT
-        gt_path = f"{folder}{epoch}_{idx}.png"
-        torchvision.utils.save_image(y.unsqueeze(1), gt_path)
+#         # Predicted
+#         predicted_path = f"{folder}{epoch}_pred_{idx}.png"
+#         torchvision.utils.save_image(preds, predicted_path)
+#         # GT
+#         gt_path = f"{folder}{epoch}_{idx}.png"
+#         torchvision.utils.save_image(y.unsqueeze(1), gt_path)
 
-    model.train()
+#     model.train()

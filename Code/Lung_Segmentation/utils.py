@@ -43,11 +43,11 @@ def getLatestModel(root):
 def get_transforms():
     train_transform = A.Compose([
         A.Rotate(limit=35, p=1.0), A.HorizontalFlip(p=0.5), A.VerticalFlip(p=0.1),
-        A.Normalize(mean=[0.0], std=[1.0], max_pixel_value=255.0),
+        A.Normalize(mean=[0.449], std=[0.226], max_pixel_value=255.0),
         ToTensorV2()])
 
     val_transform = A.Compose([
-        A.Normalize(mean=[0.0], std=[1.0], max_pixel_value=255.0),
+        A.Normalize(mean=[0.449], std=[0.226], max_pixel_value=255.0),
         ToTensorV2()])
 
     return train_transform, val_transform

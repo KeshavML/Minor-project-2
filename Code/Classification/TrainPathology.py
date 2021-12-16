@@ -33,7 +33,25 @@ def train_fn(loader, model, optimizer, loss_fn, scaler, SAVE_LOSS):
 
         # forward
         with torch.cuda.amp.autocast():
+            # print('1',data.shape)
+            # print()
+            # print()
             predictions = model(data)
+            # print('1',predictions.shape)
+            # print()
+            # print()
+            # print('1',type(predictions))
+            # print()
+            # print()
+            # print('1',predictions.detach().numpy())
+            # print()
+            # print()
+            # print('1',type(predictions.detach().numpy()))
+            # print()
+            # print()
+            # print('1',predictions.detach().numpy()[0])
+            # print()
+            # print()
             targets = targets[:,0]
             loss = loss_fn(predictions, targets)
         
@@ -89,8 +107,8 @@ def main():
             save_checkpoint(checkpoint, root=SAVE_MODEL_PATH)
             # check_loss(val_loader, model, device=DEVICE)
             # print some examples to a folder
-            save_predictions_as_csv(epoch, val_loader, model, 
-                    folder=SAVE_CSV, device=DEVICE)
+            # save_predictions_as_csv(epoch, val_loader, model, 
+            #         folder=SAVE_CSV, device=DEVICE)
         gc.collect()
 
 if __name__ == "__main__":

@@ -12,6 +12,10 @@ parser.read("../../Other/ConfigParser/config.ini")
 
 # Parameters
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+# nomalization params
+MAX_PIXEL_VALUE = 255.0
+MEAN = 0.449
+STD = 0.226
 # load images
 DATASET_PATH = parser.get('BS','load_images_pred_path')
 DATASET_COVID = parser.get('BS','load_images_pred_covid')
@@ -26,6 +30,7 @@ def save_img(img,img_name,rootdir):
 
 def predict(model, img_name):
     img = np.asarray(Image.open(img_name),dtype=np.float32)
+    img = (img - MEAN*MAX_PIXEL_VALUE)/(STD * MAX_PIXEL_VALUE)
     img = torch.from_numpy(img)
     img = torch.unsqueeze(img,0)
     img = torch.unsqueeze(img,0)

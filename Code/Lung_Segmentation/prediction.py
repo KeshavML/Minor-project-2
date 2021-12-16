@@ -20,11 +20,16 @@ LOAD_MODEL_PATH = parser.get('LS','load_model_path')
 SAVE_IMAGES_PATH = parser.get('LS','save_images_pred_path')
 SAVE_IMAGES_COVID = parser.get('LS','save_images_pred_covid')
 
+MAX_PIXEL_VALUE = 255.0
+MEAN = 0.449
+STD = 0.226
+
 def save_img(img,img_name,rootdir):
     img.save(rootdir+img_name.split("/")[-1])
 
 def predict(model, img_name):
     img = np.array(Image.open(img_name),dtype=np.float32)
+    img = (img - MEAN*MAX_PIXEL_VALUE)/(STD*MAX_PIXEL_VALUE)
     img = torch.from_numpy(img)
     img = torch.unsqueeze(img,0)
     img = torch.unsqueeze(img,0)

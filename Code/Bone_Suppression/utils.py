@@ -52,10 +52,10 @@ def get_transforms():
     """
     train_transform = A.Compose([
             A.Rotate(limit=10, p=0.4), A.HorizontalFlip(p=0.5),
-            A.Normalize(mean=0.0, std=1.0, max_pixel_value=255.0,), ToTensorV2()])
+            A.Normalize(mean=0.449, std=0.226, max_pixel_value=255.0,), ToTensorV2()])
     
     val_transform = A.Compose([
-            A.Normalize(mean=0.0, std=1.0, max_pixel_value=255.0,), ToTensorV2()])
+            A.Normalize(mean=0.449, std=0.226, max_pixel_value=255.0,), ToTensorV2()])
     
     return train_transform, val_transform
 

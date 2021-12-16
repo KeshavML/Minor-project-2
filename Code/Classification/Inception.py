@@ -66,7 +66,7 @@ class Inception(nn.Module):
         self.dropout2 = nn.Dropout(p=0.3)
         self.fc2 = nn.Linear(512,128)
         self.dropout3 = nn.Dropout(p=0.3)
-        self.fc3 = nn.Linear(128,num_classes)
+        self.fc3 = nn.LogSoftmax(128,num_classes)
 
         if self.aux_logits:
             self.aux1 = InceptionAux(192, num_classes)

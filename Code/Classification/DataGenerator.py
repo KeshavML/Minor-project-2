@@ -64,7 +64,7 @@ class MultiClassPathologyDataset(Dataset):
         self.img_dir = img_dir
         self.transform = transform
         self.file_names = self.dataframe.values.tolist()
-        print(f"Line 67 Columns: {self.dataframe.columns}")
+        # print(f"Line 67 Columns: {self.dataframe.columns}")
         self.labels = self.dataframe['Finding Labels'].values.tolist()
         self.labels = [each.split(",") for each in self.labels]
 
