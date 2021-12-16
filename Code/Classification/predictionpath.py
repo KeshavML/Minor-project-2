@@ -39,7 +39,7 @@ def savePreds(image_name,pred,rootdir):
         pred_labels=pred_labels+f',{each}'
     pred_labels = f'\"{pred_labels[1:]}\"'
     with open(rootdir,'a') as f:
-        f.write(f"{image_name},{pred_labels}")
+        f.write(f"{image_name},{pred_labels}\n")
     # pass
 
 if __name__ == "__main__":

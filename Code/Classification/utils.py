@@ -1,8 +1,10 @@
 from DataGenerator import CovidDataset, MultiClassPathologyDataset
 from albumentations.pytorch import ToTensorV2
 from torch.utils.data import DataLoader
+# from PIL import Image
 import albumentations as A
-import torchvision
+# import numpy as np
+# import torchvision
 import datetime as dt
 import torch
 import os
@@ -147,17 +149,32 @@ def write_loss(loss_val, filepath='../../OP/CL/pathology/runs/inception/loss.txt
 
 # def save_predictions_as_csv(epoch, loader, model, folder="Saved Images", device="cuda"):
 #     model.eval()
+#     MAX_PIXEL_VALUE = 255.0
+#     MEAN = 0.449
+#     STD = 0.226
 #     for idx, (x, y) in enumerate(loader):
-#         x = x['image'].to(device=device)
-#         with torch.no_grad():
-#             preds = torch.sigmoid(model(x))
-#             preds = (preds > 0.5).float()
+#         img = Image.open(x).convert('L')
+#         img = np.array(img,dtype=np.float32)
+#         img = (img - MEAN*MAX_PIXEL_VALUE)/(STD * MAX_PIXEL_VALUE)    
+#         # print('shape::',img.shape)
+#         img = torch.from_numpy(img)
+#         img = torch.unsqueeze(img,0)
+#         img = torch.unsqueeze(img,0)
+#         # print('shape::',img.shape)
+#         pred = model(img)
+#         image_name = image_name.split('/')[-1]
+#         pred = pred.numpy()[0]
+#         # print(pred)
+#         mean = pred.mean()*1.4
+#         pred = [1 if each > mean else 0 for each in pred]
+#         # print(pred)
+#         # pred = np.round(pred).astype(np.uint8)
+#         pred_labels = ''
+#         for each in pred:
+#             pred_labels=pred_labels+f',{each}'
+#         pred_labels = f'\"{pred_labels[1:]}\"'
+#         with open(rootdir,'a') as f:
+#             f.write(f"{image_name},{pred_labels}")
 
-#         # Predicted
-#         predicted_path = f"{folder}{epoch}_pred_{idx}.png"
-#         torchvision.utils.save_image(preds, predicted_path)
-#         # GT
-#         gt_path = f"{folder}{epoch}_{idx}.png"
-#         torchvision.utils.save_image(y.unsqueeze(1), gt_path)
 
 #     model.train()
