@@ -26,6 +26,7 @@ MEAN = 0.449
 STD = 0.226
 
 def save_img(img,img_name,rootdir):
+    print("Saving: ",img_name)
     img.save(rootdir+img_name.split("/")[-1])
 
 def predict(model, img_name):
@@ -57,8 +58,17 @@ if __name__ == "__main__":
     SAVE_IMAGES = SAVE_IMAGES_PATH
     # print(DATASET)
     # print(SAVE_IMAGES)
+    processed_images = os.listdir(SAVE_IMAGES)
     images = os.listdir(DATASET)
+    if len(processed_images)>0:
+        for each in processed_images:
+            try:
+                images.remove(each)
+            except Exception as e:
+                print(f"ERROR:{e}")
     images = [DATASET+each for each in images]
+
+        
     # print(images)
     with torch.no_grad():
         for each in images:
