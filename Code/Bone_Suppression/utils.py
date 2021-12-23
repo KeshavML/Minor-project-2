@@ -8,6 +8,8 @@ import torchvision
 import numpy as np
 import torch
 import os
+import warnings
+warnings.filterwarnings("ignore")
 
 # Index:
 # 1) save_checkpoint
@@ -104,23 +106,18 @@ def write_loss(loss_val, filepath='../../OP/BS/loss.txt'):
 # def check_loss(loader, model, device="cuda"):
 #     """
 #         This function provides an evaluation score.
-
 #         ### Input ###
 #         loader      : Data loader
 #         model       : Bone Suppression model
 #         device      : CPU/CUDA (GPU)
-
 #         ### Returns ###
-
 #     """
 #     num_correct = 0
 #     num_pixels = 0
 #     mse_score = 0
 #     print("This is running")
-    
 #     # To turn off batchnorm, dropouts.
 #     model.eval()
-
 #     # To turn off gradient calculation.
 #     with torch.no_grad():
 #         for x, y in loader:
@@ -129,7 +126,6 @@ def write_loss(loss_val, filepath='../../OP/BS/loss.txt'):
 #             y = y.to(device).unsqueeze(1)
 #             preds = model(x)
 #             mse_score += np.square(np.subtract(y,preds)).mean()
-
 #     # print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
 #     # print(f"MSE score: {mse_score/len(loader)}")
 #     model.train()
@@ -140,24 +136,13 @@ def save_predictions_as_imgs(epoch, loader, model, folder="../../OP/BS/saved_ima
         y = y[:,:,:,0].cpu()
         # Image
         y = np.int16(y[0,:,:].numpy())
-        # print("y",y.max(),y.min())
         y = Image.fromarray(y).convert("L")
-        # print("gt",np.array(y).max(),np.array(y).min())
-        # y.show()
-        # y.save(f"{folder}/{epoch}_{idx}.png")
-
+        y.save(f"{folder}/{epoch}_{idx}.png")
         x = x.to(device=device)
-        # print(x)
-        # print(dir(x))
-        # print(type(x))
-        # print(x.shape)
         with torch.no_grad():
             preds = model(x)
-        # print("preds",preds.max(),preds.min())
         preds = np.int16(preds.cpu().numpy()[0,0,:,:]*255)
         preds = Image.fromarray(preds).convert("L")
-        # print('preds2',np.absolute(np.array(preds)).max(),np.absolute(np.array(preds)).min())
         preds.save(f"{folder}/{epoch}_pred_{idx}.png")
-        # preds.show()
 
     model.train()

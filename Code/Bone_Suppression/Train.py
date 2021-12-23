@@ -7,6 +7,9 @@ from utils import *
 import torch
 import gc
 
+import warnings
+warnings.filterwarnings("ignore")
+
 parser = ConfigParser()
 parser.read("../../Other/ConfigParser/config.ini")
 

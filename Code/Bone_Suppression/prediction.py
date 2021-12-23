@@ -11,19 +11,20 @@ parser = ConfigParser()
 parser.read("../../Other/ConfigParser/config.ini")
 
 # Parameters
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+# DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = 'cpu'
 # nomalization params
 MAX_PIXEL_VALUE = 255.0
 MEAN = 0.449
 STD = 0.226
 # load images
 DATASET_PATH = parser.get('BS','load_images_pred_path')
-DATASET_COVID = parser.get('BS','load_images_pred_covid')
+# DATASET_COVID = parser.get('BS','load_images_pred_covid')
 # load model
 LOAD_MODEL_PATH = parser.get('BS','load_model_path')
 # save images
 SAVE_IMAGES_PATH = parser.get('BS','save_images_pred_path')
-SAVE_IMAGES_COVID = parser.get('BS','save_images_pred_covid')
+# SAVE_IMAGES_COVID = parser.get('BS','save_images_pred_covid')
 
 def save_img(img,img_name,rootdir):
     img.save(rootdir+img_name.split("/")[-1])
@@ -45,15 +46,22 @@ if __name__ == "__main__":
     model = BoneSuppression(in_channels=1, out_channels=1).to(DEVICE)
     # get latest thing
     latest_model_path = getLatestModel(root=LOAD_MODEL_PATH)
-    load_checkpoint(torch.load(f"{LOAD_MODEL_PATH}{latest_model_path}"), model)
-
+    print(latest_model_path)
+    load_checkpoint(torch.load(
+        f"{LOAD_MODEL_PATH}{latest_model_path}", 
+        map_location=DEVICE), 
+        model
+    )
+    # summary(model)
 ########################################################            
     ## Predicting Pathology images
 ########################################################            
     DATASET = DATASET_PATH
     SAVE_IMAGES = SAVE_IMAGES_PATH
+    # print(DATASET,SAVE_IMAGES)
     images = os.listdir(DATASET)
     images = [DATASET+each for each in images]
+    print(images)
     with torch.no_grad():
         for each in images:
             pred_img = predict(model,each)
@@ -62,11 +70,11 @@ if __name__ == "__main__":
 ########################################################            
     ## Predicting COVID images
 ########################################################            
-    DATASET = DATASET_COVID
-    SAVE_IMAGES = SAVE_IMAGES_COVID
-    images = os.listdir(DATASET)
-    images = [DATASET+each for each in images]
-    with torch.no_grad():
-        for each in images:
-            pred_img = predict(model,each)
-            save_img(pred_img,each,rootdir=SAVE_IMAGES)
+    # DATASET = DATASET_COVID
+    # SAVE_IMAGES = SAVE_IMAGES_COVID
+    # images = os.listdir(DATASET)
+    # images = [DATASET+each for each in images]
+    # with torch.no_grad():
+    #     for each in images:
+    #         pred_img = predict(model,each)
+    #         save_img(pred_img,each,rootdir=SAVE_IMAGES)

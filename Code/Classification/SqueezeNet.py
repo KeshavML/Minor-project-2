@@ -106,15 +106,17 @@ def fire_layer(inp, s, e):
     return f
 
 def squeezenet(pretrained=False):
-    model1 = SqueezeNet(1, 9)
-    model2 = SqueezeNet(2, 9)
-    model3 = SqueezeNet(3, 9)
-    x1 = torch.randn(3, 1, 512, 512)
-    x2 = torch.randn(3, 2, 512, 512)
-    x3 = torch.randn(3, 3, 512, 512)
-    print("Ouput 1: ",model1(x1).shape)
-    print("Ouput 2: ",model2(x2).shape)
-    print("Ouput 3: ",model3(x3).shape)
+    model = SqueezeNet(1, 9)
+    # model2 = SqueezeNet(2, 9)
+    # model3 = SqueezeNet(3, 9)
+    # x1 = torch.randn(3, 1, 512, 512)
+    # x2 = torch.randn(3, 2, 512, 512)
+    # x3 = torch.randn(3, 3, 512, 512)
+    # print("Ouput 1: ",model1(x1).shape)
+    # print("Ouput 2: ",model2(x2).shape)
+    # print("Ouput 3: ",model3(x3).shape)
+
+    # summary(model, x1)
 
     # inp = Variable(torch.randn(3,1,512,512))
     # out = model.forward(inp)

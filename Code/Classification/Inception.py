@@ -66,7 +66,7 @@ class Inception(nn.Module):
         self.dropout2 = nn.Dropout(p=0.3)
         self.fc2 = nn.Linear(512,128)
         self.dropout3 = nn.Dropout(p=0.3)
-        self.fc3 = nn.LogSoftmax(128,num_classes)
+        self.fc3 = nn.Linear(128,num_classes)
 
         if self.aux_logits:
             self.aux1 = InceptionAux(192, num_classes)
@@ -242,22 +242,22 @@ class conv_block(nn.Module):
 if __name__ == "__main__":
 
     # output = aux1, aux2, x if aux_logits == True else x
-    model1 = Inception(aux_logits=False, in_channels=1, num_classes=9)
-    model2 = Inception(aux_logits=False, in_channels=2, num_classes=9)
-    model3 = Inception(aux_logits=False, in_channels=3, num_classes=9)
+    model = Inception(aux_logits=False)
+    # model2 = Inception(aux_logits=False, in_channels=2, num_classes=9)
+    # model3 = Inception(aux_logits=False, in_channels=3, num_classes=9)
     # N = 3 (Mini batch size)
-    x1 = torch.randn(3, 1, 512, 512)
-    x2 = torch.randn(3, 2, 512, 512)
-    x3 = torch.randn(4, 3, 512, 512)
-    print("Ouput 1: ",type(model1(x1)[0]))
-    print("Ouput 2: ",len(model2(x2)))
-    print("Ouput 3: ",model3(x3)[2].shape)
+    # x1 = torch.randn(3, 1, 512, 512)
+    # x2 = torch.randn(3, 2, 512, 512)
+    # x3 = torch.randn(4, 3, 512, 512)
+    # print("Ouput 1: ",type(model1(x1)[0]))
+    # print("Ouput 2: ",len(model2(x2)))
+    # print("Ouput 3: ",model3(x3)[2].shape)
     # model2(x2)
     # print("$"*18)
     # model3(x3)[2]
     # print(model3(x3)[1])
 
-    # summary(model, (1, 512, 512))
+    summary(model, (1, 512, 512))
     # print(model)
 
     # ## Save model's structure

@@ -9,6 +9,7 @@ warnings.filterwarnings("ignore")
 # writer = SummaryWriter("runs/AE")
 
 class BoneSuppression(nn.Module):
+    # Auto Encoder
     def __init__(self, in_channels=1, out_channels=1):
         super(BoneSuppression, self).__init__()
         """
@@ -32,15 +33,19 @@ class BoneSuppression(nn.Module):
         self.decoder = nn.Sequential(
             nn.ConvTranspose2d(64, 48, 3, stride=2, padding=0),  # b, 32, 128, 128
             nn.LeakyReLU(True),
+
             nn.ConvTranspose2d(48, 32, 3, stride=1, padding=1),  # b, 32, 128, 128
             nn.LeakyReLU(True),
+
             nn.ConvTranspose2d(32, 24, 3, stride=2, padding=1),  # b, 16, 256, 256
             nn.LeakyReLU(True),
+
             nn.ConvTranspose2d(24, 16, 3, stride=1, padding=1),  # b, 16, 256, 256
             nn.LeakyReLU(True),
-            # nn.ConvTranspose2d(16, out_channels, 3, stride=2, padding=1),  # b, 1, 512, 512
+
             nn.ConvTranspose2d(16, 8, 3, stride=2, padding=1),  # b, 1, 512, 512
             nn.LeakyReLU(True),
+
             nn.ConvTranspose2d(8, out_channels, 3, stride=1, padding=1),  # b, 1, 512, 512
             # output activation function
             nn.LeakyReLU()
@@ -55,10 +60,17 @@ class BoneSuppression(nn.Module):
 
 def test():
     x = torch.randn((3,1,512,512))
-    model = BoneSuppression(in_channels=1, out_channels=1)
+    model = BoneSuppression(in_channels=1, out_channels=1).to('cpu')
     # preds = model(x)
-    
     summary(model, (1, 512, 512))
+    # import os
+    # with open('bs_arch.txt','+a') as f:
+        # pass
+    # os.chmod("bs_arch.txt", 777)
+    # data = str(summary(model, (1, 512, 512), verbose=0))
+    
+    # with open('bs_arch.txt','a') as f:
+        # f.write(data)
     ## Save model's structure
     # torch.save(model.state_dict(), './runs/Bone Suppression/Bone Suppression.pth')
 

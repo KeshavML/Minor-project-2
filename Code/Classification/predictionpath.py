@@ -54,7 +54,7 @@ if __name__ == "__main__":
     LOAD_MODEL_PATH = parser.get('CL','load_model_path_pathology')
     SAVE_CSV = parser.get('CL','save_images_pathology')+"train/"
     
-    ROOTDIR_PATH = parser.get('CL','pred_csv_pathology')+f'/{name}/preds.csv'
+    ROOTDIR_PATH = parser.get('CL','pred_csv_pathology')+f'{name}/preds.csv'
 
     SAVE_CSV = SAVE_CSV + f"{name}/"
     LOAD_MODEL_PATH = LOAD_MODEL_PATH+f"{name}/"

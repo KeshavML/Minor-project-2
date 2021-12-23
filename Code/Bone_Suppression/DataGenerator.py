@@ -3,6 +3,8 @@ from torch.utils.data import Dataset
 from PIL import Image
 import numpy as np
 import os
+import warnings
+warnings.filterwarnings("ignore")
 
 parser = ConfigParser()
 parser.read("../../Other/ConfigParser/config.ini")
